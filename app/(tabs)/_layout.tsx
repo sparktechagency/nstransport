@@ -1,43 +1,136 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import {
+  IconCarFill,
+  IconCarOutLine,
+  IconHomeFil,
+  IconHomeOutLine,
+  IconSearchFill,
+  IconSearchOutLine,
+} from "@/icons/icons";
+import { Text, View } from "react-native";
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import tw from "@/lib/tailwind";
+import { Tabs } from "expo-router";
+import React from "react";
+import { SvgXml } from "react-native-svg";
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function TabRoutes() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
+    <Tabs initialRouteName="search">
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          headerShown: false,
+
+          tabBarIcon(props) {
+            return props.focused ? (
+              <SvgXml xml={IconHomeFil} />
+            ) : (
+              <SvgXml xml={IconHomeOutLine} />
+            );
+          },
+          tabBarStyle: tw`h-18 pt-3 shadow-lg `,
+          //   tabBarItemStyle: tw`border-b-4 border-b-primary px-1 rounded-md`,
+
+          tabBarLabel(props) {
+            return (
+              <>
+                <Text
+                  style={
+                    props.focused
+                      ? tw`text-primary font-PoppinsSemiBold text-sm pb-1`
+                      : tw`text-black text-sm pb-1 font-PoppinsRegular`
+                  }
+                >
+                  Home
+                </Text>
+                <View
+                  style={
+                    props.focused
+                      ? tw`bg-primary w-[80%] h-[.3rem] rounded-t-full `
+                      : tw`bg-transparent w-[80%] h-[.3rem] rounded-t-full `
+                  }
+                />
+              </>
+            );
+          },
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="search"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          headerShown: false,
+
+          tabBarIcon(props) {
+            return props.focused ? (
+              <SvgXml xml={IconSearchFill} />
+            ) : (
+              <SvgXml xml={IconSearchOutLine} />
+            );
+          },
+          tabBarStyle: tw`h-18 pt-3 shadow-lg `,
+          //   tabBarItemStyle: tw`border-b-4 border-b-primary px-1 rounded-md`,
+
+          tabBarLabel(props) {
+            return (
+              <>
+                <Text
+                  style={
+                    props.focused
+                      ? tw`text-primary font-PoppinsSemiBold text-sm pb-1`
+                      : tw`text-black text-sm pb-1 font-PoppinsRegular`
+                  }
+                >
+                  Search
+                </Text>
+                <View
+                  style={
+                    props.focused
+                      ? tw`bg-primary w-[80%] h-[.3rem] rounded-t-full `
+                      : tw`bg-transparent w-[80%] h-[.3rem] rounded-t-full `
+                  }
+                />
+              </>
+            );
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="mange"
+        options={{
+          headerShown: false,
+
+          tabBarIcon(props) {
+            return props.focused ? (
+              <SvgXml xml={IconCarFill} />
+            ) : (
+              <SvgXml xml={IconCarOutLine} />
+            );
+          },
+          tabBarStyle: tw`h-18 pt-3 shadow-lg `,
+          //   tabBarItemStyle: tw`border-b-4 border-b-primary px-1 rounded-md`,
+
+          tabBarLabel(props) {
+            return (
+              <>
+                <Text
+                  style={
+                    props.focused
+                      ? tw`text-primary font-PoppinsSemiBold text-sm pb-1`
+                      : tw`text-black text-sm pb-1 font-PoppinsRegular`
+                  }
+                >
+                  Mange
+                </Text>
+                <View
+                  style={
+                    props.focused
+                      ? tw`bg-primary w-[80%] h-[.3rem] rounded-t-full `
+                      : tw`bg-transparent w-[80%] h-[.3rem] rounded-t-full `
+                  }
+                />
+              </>
+            );
+          },
         }}
       />
     </Tabs>

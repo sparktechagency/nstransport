@@ -1,74 +1,73 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { IconArrayUpCorner, IconPlusWhite } from "@/icons/icons";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import IwtButton from "@/lib/buttons/IwtButton";
+import tw from "@/lib/tailwind";
+import { Link } from "expo-router";
+import { SvgXml } from "react-native-svg";
 
-export default function HomeScreen() {
+const Data = [
+  {
+    id: 1,
+    title: "Total Vehicle",
+    amount: "20",
+    color: "#D8FFF4",
+    icon: require("@/assets/images/car.png"),
+  },
+  {
+    id: 2,
+    title: "Available",
+    amount: "10",
+    color: "#E0F3FF",
+    icon: require("@/assets/images/car1.png"),
+  },
+  {
+    id: 3,
+    title: "Booked",
+    amount: "10",
+    color: "#FFF6E7",
+    icon: require("@/assets/images/car2.png"),
+  },
+];
+
+export default function home() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={tw` flex-1 bg-base`}>
+      <ScrollView contentContainerStyle={tw`gap-2 mx-4 mt-12`}>
+        {Data?.map((item) => {
+          return (
+            <TouchableOpacity
+              key={item.id}
+              style={tw`bg-[${item.color}] w-full flex-row justify-around p-5 rounded-lg`}
+            >
+              <View style={tw`justify-center items-center gap-3`}>
+                <Text style={tw`text-sm text-black font-PoppinsMedium`}>
+                  {item.title}
+                </Text>
+                <Text style={tw`text-3xl text-black font-PoppinsSemiBold`}>
+                  {item.amount}
+                </Text>
+              </View>
+
+              <View style={tw`mr-4`}>
+                <Image style={tw`h-16 w-16`} source={item.icon} />
+              </View>
+              <TouchableOpacity style={tw`absolute right-2 top-2`}>
+                <SvgXml xml={IconArrayUpCorner} />
+              </TouchableOpacity>
+            </TouchableOpacity>
+          );
+        })}
+        <IwtButton
+          svg={IconPlusWhite}
+          title="Add vehicle"
+          titleStyle={tw`font-PoppinsSemiBold`}
+          containerStyle={tw`mt-4`}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </ScrollView>
+      <Link href={"/test"}>
+        <Text>Test</Text>
+      </Link>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
