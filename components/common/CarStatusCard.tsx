@@ -33,7 +33,20 @@ const CarStatusCard = ({ item, onPress }: ICarStatusProps) => {
         </Text>
       </View>
       <Text style={tw`text-sm text-black font-PoppinsBold`}>{item?.code}</Text>
-      {item?.image && <Image style={tw`h-6 w-6`} source={item.image} />}
+      {item?.image && (
+        <Image
+          style={tw`h-6 w-6`}
+          source={
+            item.image === 1
+              ? require("@/assets/images/sprinter.png")
+              : item.image === 2
+              ? require("@/assets/images/trailer.png")
+              : item.image === 3
+              ? require("@/assets/images/transporter.png")
+              : require("@/assets/images/empty.png")
+          }
+        />
+      )}
     </TouchableOpacity>
   );
 };

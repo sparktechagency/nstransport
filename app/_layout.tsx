@@ -43,9 +43,29 @@ export default function RootLayout() {
   return (
     <SafeAreaView style={tw`flex-1 pt-5 bg-base`}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <Stack initialRouteName="(tabs)">
-          <Stack.Screen name="test" />
+        <Stack initialRouteName="vehicles/availablevehicles">
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="vehicles/allvehicles"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="vehicles/availablevehicles"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="vehicles/sprinters"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="vehicles/trailers"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="vehicles/transporter"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="test" />
           <Stack.Screen name="+not-found" options={{ headerShown: false }} />
         </Stack>
         <StatusBar animated />

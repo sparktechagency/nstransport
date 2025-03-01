@@ -39,6 +39,36 @@ export const IconArrayUpCorner = `<svg width="20" height="20" viewBox="0 0 20 20
 <path d="M6.63919 12.5888L11.1113 8.11676L7.63736 8.11676L7.63736 7.02518H12.9748L12.9748 12.3626H11.8832L11.8832 8.88874L7.41117 13.3608L6.63919 12.5888Z" fill="black"/>
 </svg>
 `;
+export const IconArrayUpCornerWithShadow = `<svg width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d_7_175)">
+<rect x="4" y="0.5" width="20" height="20" rx="10" fill="white" shape-rendering="crispEdges"/>
+<path d="M10.6392 13.0888L15.1113 8.61676L11.6374 8.61676L11.6374 7.52518H16.9749L16.9749 12.8626H15.8833L15.8833 9.38874L11.4112 13.8608L10.6392 13.0888Z" fill="black"/>
+</g>
+<defs>
+<filter id="filter0_d_7_175" x="0" y="0.5" width="28" height="28" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_7_175"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_7_175" result="shape"/>
+</filter>
+</defs>
+</svg>
+
+`;
+export const IconArrayRight = `<svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M0.397603 8.88875L8.07979 16L10 14.2225L3.27791 8L10 1.7775L8.07979 0L0.397603 7.11125C0.143018 7.34699 0 7.66667 0 8C0 8.33333 0.143018 8.65301 0.397603 8.88875Z" fill="black"/>
+</svg>
+
+`;
+export const IconThreeLine = `<svg width="15" height="10" viewBox="0 0 15 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 0.75H15V2.25H0V0.75ZM2.5 4.25H12.5V5.75H2.5V4.25ZM5.5 7.75H9.5V9.25H5.5V7.75Z" fill="black"/>
+</svg>
+
+`;
 export const IconPlusWhite = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M14 8H8V14H6V8H0V6H6V0H8V6H14V8Z" fill="white"/>
 </svg>

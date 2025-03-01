@@ -15,7 +15,7 @@ import { SvgXml } from "react-native-svg";
 
 export default function TabRoutes() {
   return (
-    <Tabs initialRouteName="search">
+    <Tabs>
       <Tabs.Screen
         name="index"
         options={{

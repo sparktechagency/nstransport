@@ -66,7 +66,9 @@ const IwtButton = ({
       )}
 
       {title && (
-        <Text style={[tw`text-white font-semibold `, titleStyle]}>{title}</Text>
+        <Text style={[tw`text-white font-PoppinsRegular `, titleStyle]}>
+          {title}
+        </Text>
       )}
     </TouchableOpacity>
   );

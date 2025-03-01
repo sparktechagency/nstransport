@@ -30,29 +30,6 @@ module.exports = {
         PoppinsThin: "PoppinsThin",
         PoppinsThinItalic: "PoppinsThinItalic",
         // You can replace 'YourCustomFont' with your desired font
-        // Nunito fonts
-        NunitoSansBlack: "NunitoSansBlack",
-        NunitoSansBold: "NunitoSansBold",
-        NunitoSansExtraBold: "NunitoSansExtraBold",
-        NunitoSansExtraLight: "NunitoSansExtraLight",
-        NunitoSansLight: "NunitoSansLight",
-        NunitoSansMedium: "NunitoSansMedium",
-        NunitoSansRegular: "NunitoSansRegular",
-        NunitoSansSemiBold: "NunitoSansSemiBold",
-
-        // roboto
-        RobotoBlack: "Roboto-Black",
-        RobotoBlackItalic: "Roboto-BlackItalic",
-        RobotoBold: "Roboto-Bold",
-        RobotoBoldItalic: "Roboto-BoldItalic",
-        RobotoItalic: "Roboto-Italic",
-        RobotoLight: "Roboto-Light",
-        RobotoLightItalic: "Roboto-LightItalic",
-        RobotoMedium: "Roboto-Medium",
-        RobotoMediumItalic: "Roboto-MediumItalic",
-        RobotoRegular: "Roboto-Regular",
-        RobotoThin: "Roboto-Thin",
-        RobotoThinItalic: "Roboto-ThinItalic",
       },
 
       colors: {
