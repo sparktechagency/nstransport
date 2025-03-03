@@ -35,8 +35,13 @@ const Data = [
 export default function availablevehicles() {
   const router = useRouter();
   return (
-    <View style={tw`flex-1`}>
-      <BackWithComponent title={"Available vehicles - 32"} />
+    <View style={tw` flex-1 bg-base`}>
+      <BackWithComponent
+        onPress={() => {
+          router.back();
+        }}
+        title={"Available vehicles - 32"}
+      />
 
       <ScrollView contentContainerStyle={tw`gap-2 mx-4 mt-3`}>
         {Data?.map((item) => {

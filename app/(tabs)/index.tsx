@@ -29,7 +29,7 @@ const Data = [
     amount: "10",
     color: "#FFF6E7",
     icon: require("@/assets/images/car2.png"),
-    route: "/vehicles/allvehicles",
+    route: "/vehicles/bookedvehicles",
   },
 ];
 
@@ -67,6 +67,9 @@ export default function home() {
         })}
         <IwtButton
           svg={IconPlusWhite}
+          onPress={() => {
+            router.push("/vehicles/addNewVehicle");
+          }}
           title="Add vehicle"
           titleStyle={tw`font-PoppinsSemiBold`}
           containerStyle={tw`mt-4`}

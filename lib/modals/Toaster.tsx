@@ -1,10 +1,3 @@
-import {
-  Dimensions,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
 import React, {
   createContext,
   forwardRef,
@@ -13,8 +6,14 @@ import React, {
   useRef,
   useState,
 } from "react";
+import {
+  Dimensions,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import { BlurView } from "@react-native-community/blur";
 import { Modal } from "react-native-ui-lib";
 import tw from "../tailwind";
 
@@ -55,6 +54,7 @@ export interface PopUpModalProps {
   fullWidth?: boolean;
   fullHeight?: boolean;
   direction?: "down" | "up" | "left" | "right";
+  iconComponentStyle?: any;
 }
 
 const { width, height } = Dimensions.get("window");
@@ -78,7 +78,6 @@ const PopUpModal = forwardRef<PopUpModalRef, PopUpModalProps>(
       <Modal
         transparent
         animationType="fade"
-        enableModalBlur
         overlayBackgroundColor="rgba(0, 0, 0, 0.5)" // Semi-transparent background
         visible={visible}
         useKeyboardAvoidingView
@@ -86,11 +85,6 @@ const PopUpModal = forwardRef<PopUpModalRef, PopUpModalProps>(
         onDismiss={() => setVisible(false)}
         onBackgroundPress={() => setVisible(false)} // Close modal on background press
       >
-        <BlurView
-          style={tw`absolute top-10 left-0 right-0 bottom-0`}
-          blurType="dark"
-          blurAmount={5}
-        />
         <Pressable
           onPress={() => {
             setVisible(false);
@@ -99,7 +93,7 @@ const PopUpModal = forwardRef<PopUpModalRef, PopUpModalProps>(
         >
           <Pressable
             style={[
-              tw`bg-base bg-opacity-90 border border-white w-[80%] p-5 rounded-xl gap-2`,
+              tw`bg-white p-5 rounded-xl gap-2`,
               modalContent?.containerStyle,
             ]}
           >
@@ -118,7 +112,12 @@ const PopUpModal = forwardRef<PopUpModalRef, PopUpModalProps>(
               </View>
             )} */}
             {modalContent?.iconComponent && (
-              <View style={tw`justify-center items-center`}>
+              <View
+                style={[
+                  tw`justify-center items-center`,
+                  modalContent.iconComponentStyle,
+                ]}
+              >
                 {modalContent?.iconComponent}
               </View>
             )}
@@ -130,7 +129,7 @@ const PopUpModal = forwardRef<PopUpModalRef, PopUpModalProps>(
             {modalContent?.title && (
               <Text
                 style={[
-                  tw`text-center text-white50 text-lg`,
+                  tw`text-center text-black text-lg`,
                   modalContent.titleStyle,
                 ]}
               >
@@ -140,7 +139,7 @@ const PopUpModal = forwardRef<PopUpModalRef, PopUpModalProps>(
             {modalContent?.content && (
               <Text
                 style={[
-                  tw`text-center text-white50 font-normal text-base `,
+                  tw`text-center text-black font-normal text-base `,
                   modalContent.contentStyle,
                 ]}
               >

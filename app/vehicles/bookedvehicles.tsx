@@ -9,7 +9,7 @@ import availblevehicle from "@/assets/database/avablievehicle.json";
 import tw from "@/lib/tailwind";
 import { useRouter } from "expo-router";
 
-const transporter = () => {
+const bookedvehicles = () => {
   const router = useRouter();
 
   const [search, setSearch] = useState("");
@@ -21,7 +21,7 @@ const transporter = () => {
           router.back();
         }}
         titleStyle={tw``}
-        title={`Car Transporters  - ${
+        title={`Booked vehicles - ${
           availblevehicle?.filter((s) => {
             return s.book === false;
           }).length
@@ -51,7 +51,7 @@ const transporter = () => {
             return s.title.includes(search);
           })
           .filter((s) => {
-            return s.book === false;
+            return s.book === true;
           })}
         renderItem={({ item, index }) => {
           return (
@@ -68,4 +68,4 @@ const transporter = () => {
   );
 };
 
-export default transporter;
+export default bookedvehicles;

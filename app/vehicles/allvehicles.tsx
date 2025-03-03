@@ -1,24 +1,25 @@
+import { FlatList, TextInput, View } from "react-native";
 import { IconSearchGray, IconThreeLine } from "@/icons/icons";
 import React, { useState } from "react";
-import { FlatList, TextInput, View } from "react-native";
 
-import availblevehicle from "@/assets/database/avablievehicle.json";
-import VehicleCard from "@/components/common/VehicleCard";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
 import IwtButton from "@/lib/buttons/IwtButton";
-import TButton from "@/lib/buttons/TButton";
 import SideModal from "@/lib/modals/SideModal";
+import { SvgXml } from "react-native-svg";
+import TButton from "@/lib/buttons/TButton";
+import VehicleCard from "@/components/common/VehicleCard";
+import availblevehicle from "@/assets/database/avablievehicle.json";
 import tw from "@/lib/tailwind";
 import { useRouter } from "expo-router";
-import { SvgXml } from "react-native-svg";
 
 const allvehicles = () => {
   const router = useRouter();
+
   const [showModal, setShowModal] = useState(false);
   const [filter, setFIlter] = useState("All");
   const [search, setSearch] = useState("");
   return (
-    <View style={tw`flex-1`}>
+    <View style={tw` flex-1 bg-base`}>
       {/* header part  */}
       <BackWithComponent
         onPress={() => {
@@ -71,7 +72,17 @@ const allvehicles = () => {
               : s.book === true;
           })}
         renderItem={({ item, index }) => {
-          return <VehicleCard item={item} />;
+          return (
+            <VehicleCard
+              onPress={() => {
+                router.push({
+                  pathname: "/vehicles/booking",
+                  params: { id: item.id },
+                });
+              }}
+              item={item}
+            />
+          );
         }}
       />
 

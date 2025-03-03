@@ -39,6 +39,15 @@ export const IconArrayUpCorner = `<svg width="20" height="20" viewBox="0 0 20 20
 <path d="M6.63919 12.5888L11.1113 8.11676L7.63736 8.11676L7.63736 7.02518H12.9748L12.9748 12.3626H11.8832L11.8832 8.88874L7.41117 13.3608L6.63919 12.5888Z" fill="black"/>
 </svg>
 `;
+export const IconPenGreen = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.708 4.04128C18.098 3.65128 18.098 3.00128 17.708 2.63128L15.368 0.291279C14.998 -0.0987207 14.348 -0.0987207 13.958 0.291279L12.118 2.12128L15.868 5.87128M-0.00195312 14.2513V18.0013H3.74805L14.808 6.93128L11.058 3.18128L-0.00195312 14.2513Z" fill="#00A405"/>
+</svg>
+`;
+export const IconTrashGreen = `<svg width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M14 1H10.5L9.5 0H4.5L3.5 1H0V3H14M1 16C1 16.5304 1.21071 17.0391 1.58579 17.4142C1.96086 17.7893 2.46957 18 3 18H11C11.5304 18 12.0391 17.7893 12.4142 17.4142C12.7893 17.0391 13 16.5304 13 16V4H1V16Z" fill="#FF0000"/>
+</svg>
+
+`;
 export const IconArrayUpCornerWithShadow = `<svg width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#filter0_d_7_175)">
 <rect x="4" y="0.5" width="20" height="20" rx="10" fill="white" shape-rendering="crispEdges"/>

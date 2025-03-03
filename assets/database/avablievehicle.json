@@ -3,6 +3,7 @@
     "id": 1,
     "title": "Velocity",
     "code": "VL TR 5678",
+    "category": "sprinter",
     "image": 1,
     "book": false,
     "booked": [
@@ -19,6 +20,7 @@
     "id": 2,
     "title": "Blaze",
     "code": "BZ XR 8921",
+    "category": "transporter",
     "image": 2,
     "book": false,
     "booked": [
@@ -33,6 +35,7 @@
     "id": 3,
     "title": "Storm",
     "code": "ST XP 7845",
+    "category": "trailer",
     "image": 3,
     "book": true,
     "booked": [

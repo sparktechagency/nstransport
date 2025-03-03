@@ -1,20 +1,20 @@
-import React, { useState } from "react";
 import { FlatList, TextInput, View } from "react-native";
+import React, { useState } from "react";
 
-import availblevehicle from "@/assets/database/avablievehicle.json";
-import VehicleCard from "@/components/common/VehicleCard";
-import { IconSearchGray } from "@/icons/icons";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
+import { IconSearchGray } from "@/icons/icons";
+import { SvgXml } from "react-native-svg";
+import VehicleCard from "@/components/common/VehicleCard";
+import availblevehicle from "@/assets/database/avablievehicle.json";
 import tw from "@/lib/tailwind";
 import { useRouter } from "expo-router";
-import { SvgXml } from "react-native-svg";
 
 const sprinters = () => {
   const router = useRouter();
 
   const [search, setSearch] = useState("");
   return (
-    <View style={tw`flex-1`}>
+    <View style={tw` flex-1 bg-base`}>
       {/* header part  */}
       <BackWithComponent
         onPress={() => {
@@ -54,7 +54,14 @@ const sprinters = () => {
             return s.book === false;
           })}
         renderItem={({ item, index }) => {
-          return <VehicleCard item={item} />;
+          return (
+            <VehicleCard
+              onPress={() => {
+                router.push("/vehicles/booking");
+              }}
+              item={item}
+            />
+          );
         }}
       />
     </View>

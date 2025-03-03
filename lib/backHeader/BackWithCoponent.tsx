@@ -30,7 +30,7 @@ const BackWithComponent = ({
         containerStyle,
       ]}
     >
-      {!offBack && (
+      {!offBack ? (
         <TouchableOpacity
           onPress={onPress}
           style={tw`flex-row items-center gap-2 pr-4`}
@@ -41,6 +41,8 @@ const BackWithComponent = ({
             <SvgXml xml={IconArrayRight} />
           </View>
         </TouchableOpacity>
+      ) : (
+        <View style={tw`w-10 h-10`} />
       )}
       <Text
         numberOfLines={1}
@@ -48,16 +50,6 @@ const BackWithComponent = ({
       >
         {title ? title : "Back"}
       </Text>
-      {offBack && (
-        <View style={tw`flex-row items-center gap-2`}>
-          <Text
-            numberOfLines={1}
-            style={[tw`text-white50 font-RobotoBold text-base`, titleStyle]}
-          >
-            {title ? title : "Back"}
-          </Text>
-        </View>
-      )}
 
       {ComponentBtn ? ComponentBtn : <View style={tw`w-10 h-10`} />}
     </View>

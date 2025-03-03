@@ -1,5 +1,5 @@
-import { IconArrayDown, IconCloseBlack, IconSearchGray } from "@/icons/icons";
 import { HIGHT, WIDTH } from "@/utils/utils";
+import { IconArrayDown, IconCloseBlack, IconSearchGray } from "@/icons/icons";
 import React, { useState } from "react";
 import {
   ScrollView,
@@ -9,13 +9,12 @@ import {
   View,
 } from "react-native";
 
-import availblevehicle from "@/assets/database/avablievehicle.json";
-import CarStatusCard from "@/components/common/CarStatusCard";
-import DateModal from "@/lib/modals/DateModal";
-import NormalModal from "@/lib/modals/NormalModal";
-import tw from "@/lib/tailwind";
 import { CalendarList } from "react-native-calendars";
+import CarStatusCard from "@/components/common/CarStatusCard";
+import NormalModal from "@/lib/modals/NormalModal";
 import { SvgXml } from "react-native-svg";
+import availblevehicle from "@/assets/database/avablievehicle.json";
+import tw from "@/lib/tailwind";
 
 const today = new Date().toISOString().split("T")[0]; // Format YYYY-MM-DD
 
@@ -76,14 +75,6 @@ export default function search() {
           staticHeader={true}
         />
       </View>
-
-      <DateModal
-        visible={startDateModal}
-        setVisible={setStartDateModal}
-        selectedDate={(value) => {
-          console.log(value);
-        }}
-      />
 
       <NormalModal
         setVisible={setSelectVehicleModal}

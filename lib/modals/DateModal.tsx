@@ -1,81 +1,177 @@
 import React, { useState } from "react";
 
-import { View } from "react-native";
 import { Calendar } from "react-native-calendars";
-import tw from "../tailwind";
 import NormalModal from "./NormalModal";
+import TButton from "../buttons/TButton";
+import dayjs from "dayjs";
+import tw from "../tailwind";
 
 interface DateModalProps {
   visible: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedDate?: React.Dispatch<React.SetStateAction<Date>>;
+  selectedDate: (date: any) => void;
+  item?: any;
+  range?: boolean;
+  selectRangeDate?: (date: any) => void;
 }
-const bookedDates = ["2025-03-10", "2025-03-15", "2025-03-18"]; // Example booked dates
-const DateModal = ({ setVisible, visible }: DateModalProps) => {
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedRange, setSelectedRange] = useState({});
+
+const formatDate = (date) => dayjs(date).format("YYYY-MM-DD");
+
+const DateModal = ({
+  setVisible,
+  visible,
+  item,
+  range,
+  selectedDate,
+}: DateModalProps) => {
+  const [selectedRange, setSelectedRange] = useState<{
+    startDate?: string;
+    endDate?: string;
+  }>({});
+
+  const bookedDates = new Set(item?.booked || []); // Convert booked dates into a Set for fast lookup
+
+  const handleSingleDateSelect = (day) => {
+    selectedDate(day);
+    setVisible(false);
+  };
+
+  const handleRangeSelect = (day) => {
+    const selectedDay = day.dateString;
+
+    if (!selectedRange.startDate || selectedRange.endDate) {
+      // Set or reset the start date
+      setSelectedRange({ startDate: selectedDay, endDate: undefined });
+    } else {
+      // Check if the selected range includes booked dates
+      let currentDate = dayjs(selectedRange.startDate).add(1, "day");
+      let endDate = dayjs(selectedDay);
+      let hasBookedDate = false;
+
+      while (currentDate.isBefore(endDate, "day")) {
+        if (bookedDates.has(formatDate(currentDate))) {
+          hasBookedDate = true;
+          break;
+        }
+        currentDate = currentDate.add(1, "day");
+      }
+
+      if (
+        !hasBookedDate &&
+        dayjs(selectedDay).isAfter(dayjs(selectedRange.startDate))
+      ) {
+        // Only set end date if it does not include booked dates
+        setSelectedRange((prev) => ({
+          ...prev,
+          endDate: selectedDay,
+        }));
+      } else {
+        // Reset if the range is invalid (contains booked dates)
+        setSelectedRange({ startDate: selectedDay, endDate: undefined });
+      }
+    }
+  };
+
+  // Mark existing booked dates
+  const exitingMarking = item?.booked?.reduce((acc, date) => {
+    acc[date] = {
+      disabled: true,
+      disableTouchEvent: true,
+      color: "#FF6060",
+      textColor: "white",
+      customStyles: {
+        container: {
+          backgroundColor: "#FF6060", // Red background for booked dates
+          borderRadius: 20, // Rounded effect
+        },
+        text: {
+          color: "white", // White text
+          fontWeight: "bold",
+        },
+      },
+    };
+    return acc;
+  }, {});
 
   const getMarkedDates = () => {
-    let marked = {};
+    let marked = exitingMarking ? { ...exitingMarking } : {};
 
-    // Highlight selected date
-    if (selectedDate) {
-      marked[selectedDate] = { selected: true, selectedColor: "blue" };
-    }
-
-    // Highlight booked dates in red
-    bookedDates.forEach((date) => {
-      marked[date] = { marked: true, dotColor: "red" };
-    });
-
-    // Highlight date range
     if (selectedRange.startDate) {
       marked[selectedRange.startDate] = {
         startingDay: true,
-        color: "green",
-        textColor: "white",
+        customStyles: {
+          container: {
+            backgroundColor: "#004080", // Dark Blue for Start Date
+            borderRadius: 20, // Rounded effect
+          },
+          text: {
+            color: "white",
+            fontWeight: "bold",
+          },
+        },
       };
     }
 
     if (selectedRange.endDate) {
       marked[selectedRange.endDate] = {
         endingDay: true,
-        color: "green",
-        textColor: "white",
+        customStyles: {
+          container: {
+            backgroundColor: "#004080", // Dark Blue for End Date
+            borderRadius: 20,
+          },
+          text: {
+            color: "white",
+            fontWeight: "bold",
+          },
+        },
       };
 
-      let currentDate = dayjs(selectedRange.startDate);
+      // Fill the dates in between start and end date
+      let currentDate = dayjs(selectedRange.startDate).add(1, "day");
       let endDate = dayjs(selectedRange.endDate);
 
-      while (currentDate.isBefore(endDate)) {
-        currentDate = currentDate.add(1, "day");
+      while (currentDate.isBefore(endDate, "day")) {
         const formattedDate = formatDate(currentDate);
-        if (formattedDate !== selectedRange.endDate) {
-          marked[formattedDate] = { color: "lightgreen", textColor: "black" };
+
+        if (!bookedDates.has(formattedDate)) {
+          marked[formattedDate] = {
+            customStyles: {
+              container: {
+                backgroundColor: "#87CEFA", // Sky Blue for Range
+                borderRadius: 10,
+              },
+              text: {
+                color: "black",
+              },
+            },
+          };
         }
+
+        currentDate = currentDate.add(1, "day");
       }
+    }
+
+    // Highlight today's date
+    const today = formatDate(new Date());
+    if (!marked[today]) {
+      marked[today] = {
+        customStyles: {
+          container: {
+            backgroundColor: "#008000", // Green for Today's Date
+            borderRadius: 20,
+          },
+          text: {
+            color: "white",
+            fontWeight: "bold",
+          },
+        },
+      };
     }
 
     return marked;
   };
 
-  const handleRangeSelect = (day) => {
-    if (!selectedRange.startDate) {
-      setSelectedRange({ startDate: day.dateString, endDate: null });
-    } else if (!selectedRange.endDate) {
-      setSelectedRange((prev) => ({
-        ...prev,
-        endDate: day.dateString,
-      }));
-    } else {
-      setSelectedRange({ startDate: day.dateString, endDate: null });
-    }
-  };
-
-  const handleSingleDateSelect = (day) => {
-    setSelectedDate(day.dateString);
-  };
-  console.log(getMarkedDates());
   return (
     <>
       <NormalModal
@@ -85,23 +181,56 @@ const DateModal = ({ setVisible, visible }: DateModalProps) => {
         layerContainerStyle={tw`justify-center items-center flex-1 px-[4%] `}
         containerStyle={tw`rounded-2xl bg-white`}
       >
-        <View style={tw`bg-white`}>
-          <Calendar
-            markedDates={{
-              "2025-02-01": {
-                selected: true,
-                disableTouchEvent: false,
-                // marked: true,
-                selectedDotColor: "red",
-                selectedColor: "red",
-              },
-            }}
-            onDayPress={handleSingleDateSelect}
-          />
-        </View>
+        <Calendar
+          theme={theme}
+          markingType="custom"
+          markedDates={getMarkedDates()}
+          onDayPress={(date) =>
+            range
+              ? handleRangeSelect(date)
+              : handleSingleDateSelect(date.dateString)
+          }
+        />
+        <TButton
+          disabled={!selectedRange.startDate || !selectedRange.endDate}
+          title="Done"
+          containerStyle={tw`mt-4`}
+          onPress={() => {
+            setSelectedRange && setSelectedRange(selectedRange);
+            setVisible && setVisible(false);
+          }}
+        />
       </NormalModal>
     </>
   );
 };
 
 export default DateModal;
+
+const theme = {
+  stylesheet: {
+    calendar: {
+      header: {
+        dayHeader: {
+          fontWeight: "600",
+          color: "#48BFE3",
+        },
+        monthText: {
+          textAlign: "left", // Align the month name to start (left)
+          fontWeight: "bold",
+          fontSize: 18,
+          marginLeft: 10, // Optional for spacing
+        },
+      },
+    },
+  },
+  "stylesheet.day.basic": {
+    today: tw`bg-primary rounded-full`,
+    todayText: tw`text-white`,
+  },
+  // Custom styles for marked dates
+  "stylesheet.day.single": {
+    base: tw`border border-red-500`, // Add border to marked dates
+    text: tw`text-red-500 font-bold`, // Make text red
+  },
+};
