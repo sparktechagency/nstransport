@@ -46,7 +46,7 @@ export default function RootLayout() {
       <ToastProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <Stack
-            initialRouteName="/vehicles/confirmbooking"
+            initialRouteName="(tabs)"
             screenOptions={{
               headerShown: false,
             }}
