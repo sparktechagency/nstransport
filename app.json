@@ -16,7 +16,6 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
-        
       },
       "package": "com.arifbiswas.nstransport"
     },
@@ -26,7 +25,6 @@
       "favicon": "./assets/images/icon.png"
     },
     "plugins": [
-      
       "expo-router",
       [
         "expo-splash-screen",
@@ -37,10 +35,17 @@
           "backgroundColor": "#ffffff"
         }
       ]
-     
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "7c0d51e4-40e6-4677-a15c-6329b8a6b223"
+      }
     }
   }
 }
