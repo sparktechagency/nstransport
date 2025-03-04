@@ -46,12 +46,13 @@ export default function RootLayout() {
       <ToastProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <Stack
-            initialRouteName="/vehicles/booking"
+            initialRouteName="/vehicles/confirmbooking"
             screenOptions={{
               headerShown: false,
             }}
           >
             <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="vehicles/confirmbooking" />
             <Stack.Screen name="vehicles/booking" />
             <Stack.Screen name="vehicles/addNewVehicle" />
             <Stack.Screen name="vehicles/allvehicles" />

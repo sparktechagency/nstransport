@@ -8,14 +8,17 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
 import DateModal from "@/lib/modals/DateModal";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { Dropdown } from "react-native-element-dropdown";
 import { Formik } from "formik";
 import { IconCalendar } from "@/icons/icons";
 import { SvgXml } from "react-native-svg";
 import TButton from "@/lib/buttons/TButton";
 import availblevehicle from "@/assets/database/avablievehicle.json";
+import dayjs from "dayjs";
 import tw from "@/lib/tailwind";
 
 export default function booking() {
@@ -23,10 +26,32 @@ export default function booking() {
   const [selectVehicle, setSelectVehicle] = useState(null);
 
   const [dateModal, setDateModal] = useState(false);
-  const [startDateModal, setStartDateModal] = useState(false);
-  const [endDateModal, setEndDateModal] = useState(false);
+  const [selectRangeDateModal, setSelectRangeDateModal] = useState(false);
   const [startTimeModal, setStartTimeModal] = useState(false);
   const [endTimeModal, setEndTimeModal] = useState(false);
+
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setShow(false);
+    setDate(currentDate);
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode("date");
+  };
+
+  const showTimepicker = () => {
+    showMode("time");
+  };
 
   const router = useRouter();
 
@@ -65,15 +90,27 @@ export default function booking() {
           renter_name: "",
           phone_number: "",
           type: "",
-          data: "",
-          start_data: "",
-          end_data: "",
+          data: [],
           start_time: "",
           end_time: "",
         }}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={async (values) => {
+          await AsyncStorage.setItem("booking", JSON.stringify(values));
+          router.push({
+            pathname: "/vehicles/confirmbooking",
+            params: {
+              id,
+            },
+          });
+        }}
       >
-        {({ handleChange, handleBlur, handleSubmit, values }) => (
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          setFieldValue,
+        }) => (
           <>
             <ScrollView
               keyboardShouldPersistTaps="always"
@@ -146,38 +183,69 @@ export default function booking() {
                 </View>
 
                 {values.type === "single" && (
-                  <View style={tw`gap-2`}>
-                    <Text
-                      style={tw`text-base text-black font-PoppinsSemiBold px-1`}
-                    >
-                      Booking Date
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setDateModal(true);
-                      }}
-                    >
-                      <View
-                        style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-between`}
+                  <>
+                    <View style={tw`gap-2`}>
+                      <Text
+                        style={tw`text-base text-black font-PoppinsSemiBold px-1`}
                       >
-                        <Text
-                          style={tw`text-sm text-gray-500 font-PoppinsRegular`}
-                        >
-                          {values?.data ? values?.data : "Select date"}
-                        </Text>
-                        <SvgXml xml={IconCalendar} />
-                      </View>
-                      <DateModal
-                        item={selectVehicle}
-                        selectedDate={(date) => {
-                          handleChange("data")(date.toString());
-                          // setDateModal(false);
+                        Booking Date
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setDateModal(true);
                         }}
-                        visible={dateModal}
-                        setVisible={setDateModal}
-                      />
-                    </TouchableOpacity>
-                  </View>
+                      >
+                        <View
+                          style={tw`bg-white h-12 p-2 rounded-md flex-row items-center justify-between`}
+                        >
+                          <Text
+                            style={tw`text-sm text-gray-500 font-PoppinsRegular`}
+                          >
+                            {values?.data?.length
+                              ? values?.data
+                              : "Select date"}
+                          </Text>
+                          <SvgXml xml={IconCalendar} />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                    <View style={tw`gap-2`}>
+                      <Text
+                        style={tw`text-base text-black font-PoppinsSemiBold px-1`}
+                      >
+                        Booking Time
+                      </Text>
+
+                      <TouchableOpacity onPress={() => setStartTimeModal(true)}>
+                        <View
+                          style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-between`}
+                        >
+                          <Text
+                            style={tw`text-sm text-gray-500 font-PoppinsRegular`}
+                          >
+                            {values?.start_time
+                              ? values?.start_time
+                              : "Select start time"}
+                          </Text>
+                          <SvgXml xml={IconCalendar} />
+                        </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setEndTimeModal(true)}>
+                        <View
+                          style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-between`}
+                        >
+                          <Text
+                            style={tw`text-sm text-gray-500 font-PoppinsRegular`}
+                          >
+                            {values?.end_time
+                              ? values?.end_time
+                              : "Select end time"}
+                          </Text>
+                          <SvgXml xml={IconCalendar} />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </>
                 )}
                 {values.type === "multiple" && (
                   <View style={tw`gap-2`}>
@@ -188,88 +256,84 @@ export default function booking() {
                     </Text>
                     <TouchableOpacity
                       onPress={() => {
-                        setStartDateModal(true);
+                        setSelectRangeDateModal(true);
                       }}
                     >
                       <View
-                        style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-between`}
+                        style={tw`bg-white min-h-12 p-2 rounded-md flex-row ${
+                          values?.data?.length
+                            ? "flex-wrap gap-2 "
+                            : "justify-between"
+                        } items-center `}
                       >
-                        <Text
-                          style={tw`text-sm text-gray-500 font-PoppinsRegular`}
-                        >
-                          {values?.start_data
-                            ? values?.start_data
-                            : "Start date"}
-                        </Text>
-                        <SvgXml xml={IconCalendar} />
-                      </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setEndDateModal(true);
-                      }}
-                    >
-                      <View
-                        style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-between`}
-                      >
-                        <Text
-                          style={tw`text-sm text-gray-500 font-PoppinsRegular`}
-                        >
-                          {values?.end_data ? values?.end_data : "End date"}
-                        </Text>
-                        <SvgXml xml={IconCalendar} />
+                        {values?.data?.length ? (
+                          values?.data?.map((date) => {
+                            return (
+                              <View key={date} style={tw`gap-3`}>
+                                <Text style={tw`p-1 bg-base rounded-md`}>
+                                  {date}
+                                </Text>
+                              </View>
+                            );
+                          })
+                        ) : (
+                          <Text
+                            style={tw`text-sm text-gray-500 font-PoppinsRegular `}
+                          >
+                            Select date range
+                          </Text>
+                        )}
+                        {!values?.data?.length && <SvgXml xml={IconCalendar} />}
                       </View>
                     </TouchableOpacity>
                   </View>
                 )}
-
-                <View style={tw`gap-2`}>
-                  <Text
-                    style={tw`text-base text-black font-PoppinsSemiBold px-1`}
-                  >
-                    Booking Time
-                  </Text>
-                  <TouchableOpacity>
-                    <View
-                      style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-between`}
-                    >
-                      <Text
-                        style={tw`text-sm text-gray-500 font-PoppinsRegular`}
-                      >
-                        Select time
-                      </Text>
-                      <SvgXml xml={IconCalendar} />
-                    </View>
-                  </TouchableOpacity>
-                </View>
               </View>
             </ScrollView>
             <View style={tw`my-5 mx-4`}>
-              <TButton onPress={handleSubmit} title="Add" />
+              <TButton onPress={handleSubmit} title="Book" />
             </View>
 
+            {/* time picker  */}
+
+            {(startTimeModal || endTimeModal) && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={"time"}
+                is24Hour={true}
+                onChange={(event, selectedDate) => {
+                  const currentDate = selectedDate;
+                  if (startTimeModal) {
+                    setFieldValue(
+                      "start_time",
+                      dayjs(currentDate).format("HH:mm")
+                    );
+                    setStartTimeModal(false);
+                  }
+                  if (endTimeModal) {
+                    setFieldValue(
+                      "end_time",
+                      dayjs(currentDate).format("HH:mm")
+                    );
+                    setEndTimeModal(false);
+                  }
+                }}
+              />
+            )}
+            {/* date picker  */}
             <DateModal
               item={selectVehicle}
               selectedDate={(date) => {
-                if (dateModal) {
-                  handleChange("data")(date.toString());
-                }
-                if (startDateModal) {
-                  handleChange("start_data")(date.toString());
-                }
-                if (endDateModal) {
-                  handleChange("end_data")(date.toString());
-                }
+                setFieldValue("data", date);
               }}
               range={values.type === "multiple"}
-              visible={dateModal || endDateModal || startDateModal}
+              visible={dateModal || selectRangeDateModal}
               setVisible={
                 dateModal
                   ? setDateModal
-                  : endDateModal
-                  ? setEndDateModal
-                  : startDateModal
-                  ? setStartDateModal
+                  : selectRangeDateModal
+                  ? setSelectRangeDateModal
                   : () => {}
               }
             />

@@ -1,10 +1,10 @@
 import { IconArrayUpCorner, IconPlusWhite } from "@/icons/icons";
-import { Link, useRouter } from "expo-router";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import IwtButton from "@/lib/buttons/IwtButton";
-import tw from "@/lib/tailwind";
 import { SvgXml } from "react-native-svg";
+import tw from "@/lib/tailwind";
+import { useRouter } from "expo-router";
 
 const Data = [
   {
@@ -75,9 +75,9 @@ export default function home() {
           containerStyle={tw`mt-4`}
         />
       </ScrollView>
-      <Link href={"/test"}>
+      {/* <Link href={"/test"}>
         <Text>Test</Text>
-      </Link>
+      </Link> */}
     </View>
   );
 }
