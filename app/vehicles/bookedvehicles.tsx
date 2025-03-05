@@ -57,7 +57,10 @@ const bookedvehicles = () => {
           return (
             <VehicleCard
               onPress={() => {
-                router.push("/vehicles/booking");
+                router.push({
+                  pathname: "/vehicles/booking",
+                  params: { id: item.id },
+                });
               }}
               item={item}
             />

@@ -49,6 +49,8 @@ export default function RootLayout() {
             initialRouteName="(tabs)"
             screenOptions={{
               headerShown: false,
+              animation: "slide_from_right",
+              animationDuration: 1000,
             }}
           >
             <Stack.Screen name="(tabs)" />
@@ -64,7 +66,7 @@ export default function RootLayout() {
             <Stack.Screen name="test" />
             <Stack.Screen name="+not-found" />
           </Stack>
-          <StatusBar animated />
+          <StatusBar backgroundColor={"#f0f5ff"} style="dark" />
         </GestureHandlerRootView>
       </ToastProvider>
     </SafeAreaView>
