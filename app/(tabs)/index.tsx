@@ -2,9 +2,10 @@ import { IconArrayUpCorner, IconPlusWhite } from "@/icons/icons";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import IwtButton from "@/lib/buttons/IwtButton";
-import { SvgXml } from "react-native-svg";
+import { useToast } from "@/lib/modals/Toaster";
 import tw from "@/lib/tailwind";
 import { useRouter } from "expo-router";
+import { SvgXml } from "react-native-svg";
 
 const Data = [
   {
@@ -35,6 +36,9 @@ const Data = [
 
 export default function home() {
   const router = useRouter();
+
+  const { showToast } = useToast();
+
   return (
     <View style={tw` flex-1 bg-base`}>
       <ScrollView contentContainerStyle={tw`gap-2 mx-4 mt-12`}>
@@ -47,8 +51,8 @@ export default function home() {
               key={item.id}
               style={tw`bg-[${item.color}] w-full flex-row justify-around p-5 rounded-lg`}
             >
-              <View style={tw`justify-center items-center gap-3`}>
-                <Text style={tw`text-sm text-black font-PoppinsMedium`}>
+              <View style={tw`justify-center items-center gap-3 flex-1`}>
+                <Text style={tw`flex-1 text-sm text-black font-PoppinsMedium`}>
                   {item.title}
                 </Text>
                 <Text style={tw`text-3xl text-black font-PoppinsSemiBold`}>
@@ -56,19 +60,25 @@ export default function home() {
                 </Text>
               </View>
 
-              <View style={tw`mr-4`}>
-                <Image style={tw`h-16 w-16`} source={item.icon} />
+              <View style={tw`flex-1`}>
+                <View style={tw` justify-end items-end  mr-10 `}>
+                  <Image style={tw`h-16 w-16`} source={item.icon} />
+                </View>
+                <TouchableOpacity style={tw`absolute right-2 top-2`}>
+                  <SvgXml xml={IconArrayUpCorner} />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity style={tw`absolute right-2 top-2`}>
-                <SvgXml xml={IconArrayUpCorner} />
-              </TouchableOpacity>
             </TouchableOpacity>
           );
         })}
         <IwtButton
           svg={IconPlusWhite}
           onPress={() => {
-            router.push("/vehicles/addNewVehicle");
+            // router.push("/vehicles/addNewVehicle");
+            showToast({
+              title: "Add vehicle",
+              content: "You can add vehicle from vehicle tab",
+            });
           }}
           title="Add vehicle"
           titleStyle={tw`font-PoppinsSemiBold`}

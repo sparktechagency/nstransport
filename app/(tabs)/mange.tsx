@@ -1,4 +1,11 @@
 import {
+  IconCloseBlack,
+  IconPenGreen,
+  IconSearchGray,
+  IconTrashGreen,
+} from "@/icons/icons";
+import React, { useState } from "react";
+import {
   FlatList,
   Image,
   ScrollView,
@@ -7,25 +14,18 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  IconCloseBlack,
-  IconPenGreen,
-  IconSearchGray,
-  IconTrashGreen,
-} from "@/icons/icons";
-import React, { useState } from "react";
 
-import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
-import { Dropdown } from "react-native-element-dropdown";
-import IButton from "@/lib/buttons/IButton";
-import NormalModal from "@/lib/modals/NormalModal";
-import { SvgXml } from "react-native-svg";
-import TButton from "@/lib/buttons/TButton";
-import VehicleCard from "@/components/common/VehicleCard";
 import availblevehicle from "@/assets/database/avablievehicle.json";
+import VehicleCard from "@/components/common/VehicleCard";
+import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
+import IButton from "@/lib/buttons/IButton";
+import TButton from "@/lib/buttons/TButton";
+import NormalModal from "@/lib/modals/NormalModal";
+import { useToast } from "@/lib/modals/Toaster";
 import tw from "@/lib/tailwind";
 import { useRouter } from "expo-router";
-import { useToast } from "@/lib/modals/Toaster";
+import { Dropdown } from "react-native-element-dropdown";
+import { SvgXml } from "react-native-svg";
 
 const mange = () => {
   const router = useRouter();
@@ -92,7 +92,7 @@ const mange = () => {
   };
 
   return (
-    <View style={tw` flex-1 bg-base`}>
+    <View style={tw`flex-1 bg-base`}>
       {/* header part  */}
       <BackWithComponent offBack titleStyle={tw``} title={`Manage Vehicles`} />
 

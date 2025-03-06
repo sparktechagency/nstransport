@@ -6,7 +6,6 @@ import { ToastProvider } from "@/lib/modals/Toaster";
 import tw from "@/lib/tailwind";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -52,6 +51,9 @@ export default function RootLayout() {
                 headerShown: false,
                 animation: "slide_from_right",
                 animationDuration: 1000,
+                statusBarAnimation: "fade",
+                statusBarColor: "#F0F5FF",
+                statusBarStyle: "dark",
               }}
             >
               <Stack.Screen name="(tabs)" />
@@ -70,7 +72,6 @@ export default function RootLayout() {
           </GestureHandlerRootView>
         </ToastProvider>
       </SafeAreaView>
-      <StatusBar backgroundColor={"#F0F5FF"} style="dark" />
     </>
   );
 }
