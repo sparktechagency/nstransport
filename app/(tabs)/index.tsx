@@ -2,7 +2,6 @@ import { IconArrayUpCorner, IconPlusWhite } from "@/icons/icons";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import IwtButton from "@/lib/buttons/IwtButton";
-import { useToast } from "@/lib/modals/Toaster";
 import tw from "@/lib/tailwind";
 import { useRouter } from "expo-router";
 import { SvgXml } from "react-native-svg";
@@ -36,8 +35,6 @@ const Data = [
 
 export default function home() {
   const router = useRouter();
-
-  const { showToast } = useToast();
 
   return (
     <View style={tw` flex-1 bg-base`}>
@@ -74,11 +71,7 @@ export default function home() {
         <IwtButton
           svg={IconPlusWhite}
           onPress={() => {
-            // router.push("/vehicles/addNewVehicle");
-            showToast({
-              title: "Add vehicle",
-              content: "You can add vehicle from vehicle tab",
-            });
+            router.push("/vehicles/addNewVehicle");
           }}
           title="Add vehicle"
           titleStyle={tw`font-PoppinsSemiBold`}
