@@ -49,7 +49,7 @@ export default function home() {
               style={tw`bg-[${item.color}] w-full flex-row justify-around p-5 rounded-lg`}
             >
               <View style={tw`justify-center items-center gap-3 flex-1`}>
-                <Text style={tw`flex-1 text-sm text-black font-PoppinsMedium`}>
+                <Text style={tw` text-sm text-black font-PoppinsMedium`}>
                   {item.title}
                 </Text>
                 <Text style={tw`text-3xl text-black font-PoppinsSemiBold`}>

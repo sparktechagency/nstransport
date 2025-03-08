@@ -81,7 +81,7 @@ const PopUpModal = forwardRef<PopUpModalRef, PopUpModalProps>(
         overlayBackgroundColor="rgba(0, 0, 0, 0.5)" // Semi-transparent background
         visible={visible}
         useKeyboardAvoidingView
-        statusBarTranslucent
+        // statusBarTranslucent
         onDismiss={() => setVisible(false)}
         onBackgroundPress={() => setVisible(false)} // Close modal on background press
       >

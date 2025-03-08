@@ -26,7 +26,6 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
         <data android:scheme="com.arifbiswas.nstransport"/>
-        <data android:scheme="exp+nstransport"/>
       </intent-filter>
     </activity>
   </application>
