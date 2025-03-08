@@ -6,12 +6,16 @@ import {
   IconSearchFill,
   IconSearchOutLine,
 } from "@/icons/icons";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 import tw from "@/lib/tailwind";
 import { Tabs } from "expo-router";
 import React from "react";
 import { SvgXml } from "react-native-svg";
+
+const TabBarButton = (props: any) => {
+  return <TouchableOpacity {...props} />;
+};
 
 export default function TabRoutes() {
   return (
@@ -20,7 +24,7 @@ export default function TabRoutes() {
         name="index"
         options={{
           headerShown: false,
-
+          tabBarButton: TabBarButton,
           tabBarIcon(props) {
             return props.focused ? (
               <SvgXml xml={IconHomeFil} />
@@ -28,7 +32,7 @@ export default function TabRoutes() {
               <SvgXml xml={IconHomeOutLine} />
             );
           },
-          tabBarStyle: tw`h-18 pt-3 shadow-lg `,
+          tabBarStyle: tw`h-18 pt-3 shadow-lg  `,
           //   tabBarItemStyle: tw`border-b-4 border-b-primary px-1 rounded-md`,
 
           tabBarLabel(props) {
@@ -59,7 +63,7 @@ export default function TabRoutes() {
         name="search"
         options={{
           headerShown: false,
-
+          tabBarButton: TabBarButton,
           tabBarIcon(props) {
             return props.focused ? (
               <SvgXml xml={IconSearchFill} />
@@ -98,7 +102,7 @@ export default function TabRoutes() {
         name="mange"
         options={{
           headerShown: false,
-
+          tabBarButton: TabBarButton,
           tabBarIcon(props) {
             return props.focused ? (
               <SvgXml xml={IconCarFill} />
