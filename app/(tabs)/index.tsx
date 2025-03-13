@@ -3,6 +3,7 @@ import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import IwtButton from "@/lib/buttons/IwtButton";
 import tw from "@/lib/tailwind";
+import { useGetStatisticQuery } from "@/redux/apiSlices/homeApiSlices";
 import { useRouter } from "expo-router";
 import { SvgXml } from "react-native-svg";
 
@@ -35,6 +36,8 @@ const Data = [
 
 export default function home() {
   const router = useRouter();
+
+  const { data: statistic } = useGetStatisticQuery({});
 
   return (
     <View style={tw` flex-1 bg-base`}>

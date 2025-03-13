@@ -39,11 +39,12 @@ export default function TabRoutes() {
             return (
               <>
                 <Text
-                  style={
+                  style={[
                     props.focused
                       ? tw`text-primary font-PoppinsSemiBold text-sm pb-1`
-                      : tw`text-black text-sm pb-1 font-PoppinsRegular`
-                  }
+                      : tw`text-black text-sm pb-1 font-PoppinsRegular`,
+                    tw`flex-1`,
+                  ]}
                 >
                   Home
                 </Text>
@@ -78,11 +79,12 @@ export default function TabRoutes() {
             return (
               <>
                 <Text
-                  style={
+                  style={[
                     props.focused
                       ? tw`text-primary font-PoppinsSemiBold text-sm pb-1`
-                      : tw`text-black text-sm pb-1 font-PoppinsRegular`
-                  }
+                      : tw`text-black text-sm pb-1 font-PoppinsRegular`,
+                    tw`flex-1`,
+                  ]}
                 >
                   Search
                 </Text>
@@ -117,11 +119,12 @@ export default function TabRoutes() {
             return (
               <>
                 <Text
-                  style={
+                  style={[
                     props.focused
                       ? tw`text-primary font-PoppinsSemiBold text-sm pb-1`
-                      : tw`text-black text-sm pb-1 font-PoppinsRegular`
-                  }
+                      : tw`text-black text-sm pb-1 font-PoppinsRegular`,
+                    tw`flex-1`,
+                  ]}
                 >
                   Mange
                 </Text>

@@ -4,11 +4,13 @@ import * as SplashScreen from "expo-splash-screen";
 
 import { ToastProvider } from "@/lib/modals/Toaster";
 import tw from "@/lib/tailwind";
+import store from "@/redux/store";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Provider } from "react-redux";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -43,34 +45,36 @@ export default function RootLayout() {
   return (
     <>
       <SafeAreaView style={tw`flex-1 pt-5 bg-base`}>
-        <ToastProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <Stack
-              initialRouteName="(tabs)"
-              screenOptions={{
-                headerShown: false,
-                animation: "slide_from_right",
-                animationDuration: 1000,
-                statusBarAnimation: "fade",
-                statusBarColor: "#F0F5FF",
-                statusBarStyle: "dark",
-              }}
-            >
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="vehicles/confirmbooking" />
-              <Stack.Screen name="vehicles/booking" />
-              <Stack.Screen name="vehicles/addNewVehicle" />
-              <Stack.Screen name="vehicles/allvehicles" />
-              <Stack.Screen name="vehicles/availablevehicles" />
-              <Stack.Screen name="vehicles/sprinters" />
-              <Stack.Screen name="vehicles/trailers" />
-              <Stack.Screen name="vehicles/transporter" />
-              <Stack.Screen name="vehicles/bookedvehicles" />
-              <Stack.Screen name="test" />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-          </GestureHandlerRootView>
-        </ToastProvider>
+        <Provider store={store}>
+          <ToastProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <Stack
+                initialRouteName="(tabs)"
+                screenOptions={{
+                  headerShown: false,
+                  animation: "slide_from_right",
+                  animationDuration: 1000,
+                  statusBarAnimation: "fade",
+                  statusBarColor: "#F0F5FF",
+                  statusBarStyle: "dark",
+                }}
+              >
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="vehicles/confirmbooking" />
+                <Stack.Screen name="vehicles/booking" />
+                <Stack.Screen name="vehicles/addNewVehicle" />
+                <Stack.Screen name="vehicles/allvehicles" />
+                <Stack.Screen name="vehicles/availablevehicles" />
+                <Stack.Screen name="vehicles/sprinters" />
+                <Stack.Screen name="vehicles/trailers" />
+                <Stack.Screen name="vehicles/transporter" />
+                <Stack.Screen name="vehicles/bookedvehicles" />
+                <Stack.Screen name="test" />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+            </GestureHandlerRootView>
+          </ToastProvider>
+        </Provider>
       </SafeAreaView>
     </>
   );
