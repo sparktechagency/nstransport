@@ -39,7 +39,7 @@ const NormalModal = ({
       <TouchableWithoutFeedback onPress={() => setVisible && setVisible(false)}>
         <View
           style={[
-            tw`flex-1  justify-center items-center `,
+            tw`flex-1  justify-center items-center  `,
             layerContainerStyle,
           ]}
         >

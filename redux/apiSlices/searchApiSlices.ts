@@ -1,10 +1,11 @@
 import { api } from "../api/baseApi";
+import { IVehicles } from "../interface/interface";
 
 const searchSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    searchVehicle: builder.query<any, any>({
-      query: ({ page = 10, search, limit }) => ({
-        url: `search?per_page=${page}&search=${search}&limit=${limit}`,
+    searchVehicle: builder.query<IVehicles, any>({
+      query: ({ page, search, limit }) => ({
+        url: `search?search=${search}`,
       }),
       providesTags: ["vehicle"],
     }),

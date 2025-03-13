@@ -1,35 +1,46 @@
+import * as yup from "yup";
+
+import {
+  useAddVehicleMutation,
+  useGetCategoriesQuery,
+} from "@/redux/apiSlices/homeApiSlices";
 import { Image, ScrollView, Text, TextInput, View } from "react-native";
-import React, { useState } from "react";
 
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
-import { Dropdown } from "react-native-element-dropdown";
-import { Formik } from "formik";
 import TButton from "@/lib/buttons/TButton";
+import { useToast } from "@/lib/modals/Toaster";
 import tw from "@/lib/tailwind";
 import { useRouter } from "expo-router";
+import { Formik } from "formik";
+import React from "react";
+import { Dropdown } from "react-native-element-dropdown";
 
-const data = [
-  {
-    label: "Sprinter",
-    value: "sprinter",
-    source: require("@/assets/images/sprinter.png"),
-  },
-  {
-    label: "Car transporter",
-    value: "transporter",
-    source: require("@/assets/images/transporter.png"),
-  },
-  {
-    label: "Trailer",
-    value: "trailer",
-    source: require("@/assets/images/trailer.png"),
-  },
-];
 const addNewVehicle = () => {
   const router = useRouter();
+  const { showToast, closeToast } = useToast();
 
-  const [selectCategory, setSelectCategory] = useState();
-  const [selectVehicles, setSelectVehicles] = useState(null);
+  const { data: categories } = useGetCategoriesQuery({});
+
+  const [addNewVehicle] = useAddVehicleMutation();
+
+  const addVehicleSchema = yup.object().shape({
+    name: yup.string().required("* required"),
+    category_id: yup.number().required("* required"),
+    number_plate: yup.string().required("* required"),
+  });
+
+  const handleAddNewVehicle = async (values: any) => {
+    try {
+      addNewVehicle(values).unwrap();
+      router?.navigate("/(tabs)/");
+    } catch (error) {
+      console.log(error);
+      showToast({
+        title: "Warning",
+        content: error.message,
+      });
+    }
+  };
 
   return (
     <View style={tw` flex-1 bg-base`}>
@@ -42,10 +53,19 @@ const addNewVehicle = () => {
         title={`Add Vehicles`}
       />
       <Formik
-        initialValues={{ name: "", category: "", code: "" }}
-        onSubmit={(values) => console.log(values)}
+        initialValues={{ name: "", category_id: "", number_plate: "" }}
+        onSubmit={(values) => handleAddNewVehicle(values)}
+        validationSchema={addVehicleSchema}
+        validateOnSubmit={true}
       >
-        {({ handleChange, handleBlur, handleSubmit, values }) => (
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          setFieldValue,
+          errors,
+        }) => (
           <>
             <ScrollView
               keyboardShouldPersistTaps="always"
@@ -55,11 +75,20 @@ const addNewVehicle = () => {
 
               <View style={tw`gap-4 pb-5`}>
                 <View style={tw`gap-1 `}>
-                  <Text
-                    style={tw`text-base text-black font-PoppinsSemiBold px-1`}
-                  >
-                    Car Name
-                  </Text>
+                  <View style={tw`flex-row items-center`}>
+                    <Text
+                      style={tw`text-base text-black font-PoppinsSemiBold px-1`}
+                    >
+                      Car Name{" "}
+                    </Text>
+                    {errors.name && (
+                      <Text
+                        style={tw`text-red-500 text-xs font-PoppinsRegular`}
+                      >
+                        {errors.name}
+                      </Text>
+                    )}
+                  </View>
                   <TextInput
                     onChangeText={handleChange("name")}
                     onBlur={handleBlur("name")}
@@ -69,23 +98,33 @@ const addNewVehicle = () => {
                   />
                 </View>
                 <View style={tw`gap-1 `}>
-                  <Text
-                    style={tw`text-base text-black font-PoppinsSemiBold px-1`}
-                  >
-                    Category
-                  </Text>
+                  <View style={tw`flex-row items-center`}>
+                    <Text
+                      style={tw`text-base text-black font-PoppinsSemiBold px-1`}
+                    >
+                      Category
+                    </Text>
+                    {errors.name && (
+                      <Text
+                        style={tw`text-red-500 text-xs font-PoppinsRegular`}
+                      >
+                        {errors.name}
+                      </Text>
+                    )}
+                  </View>
                   <Dropdown
                     style={tw`bg-white h-12 px-2 rounded-md`}
                     placeholderStyle={tw`text-gray-500 text-sm`}
                     itemContainerStyle={tw`bg-transparent`}
-                    data={data}
+                    data={categories?.data || []}
                     maxHeight={300}
-                    labelField="label"
-                    valueField="value"
+                    labelField="name"
+                    valueField="id"
                     placeholder="Select item"
-                    value={values.category}
+                    value={values.category_id}
                     onChange={(item) => {
-                      handleChange("category")(item.value);
+                      // console.log(item);
+                      setFieldValue("category_id", item?.id);
                     }}
                     renderItem={(item) => {
                       return (
@@ -95,24 +134,39 @@ const addNewVehicle = () => {
                           <Text
                             style={tw`text-base text-black font-PoppinsMedium`}
                           >
-                            {item?.label}
+                            {item?.name}
                           </Text>
-                          <Image style={tw`h-6 w-6`} source={item?.source} />
+                          <Image
+                            style={tw`h-6 w-6`}
+                            source={{
+                              uri: item?.icon,
+                            }}
+                          />
                         </View>
                       );
                     }}
                   />
                 </View>
+
                 <View style={tw`gap-1 `}>
-                  <Text
-                    style={tw`text-base text-black font-PoppinsSemiBold px-1`}
-                  >
-                    Number Plate
-                  </Text>
+                  <View style={tw`flex-row items-center`}>
+                    <Text
+                      style={tw`text-base text-black font-PoppinsSemiBold px-1`}
+                    >
+                      Number Plate
+                    </Text>
+                    {errors.name && (
+                      <Text
+                        style={tw`text-red-500 text-xs font-PoppinsRegular`}
+                      >
+                        {errors.name}
+                      </Text>
+                    )}
+                  </View>
                   <TextInput
-                    onChangeText={handleChange("code")}
-                    onBlur={handleBlur("code")}
-                    value={values.code}
+                    onChangeText={handleChange("number_plate")}
+                    onBlur={handleBlur("number_plate")}
+                    value={values.number_plate}
                     placeholder="Enter number plate"
                     style={tw`bg-white h-12 rounded-md px-2`}
                   />

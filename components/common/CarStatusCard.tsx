@@ -1,15 +1,11 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import tw from "@/lib/tailwind";
+import { IVehicle } from "@/redux/interface/interface";
 import React from "react";
 
 interface ICarStatusProps {
-  item: {
-    book: boolean;
-    title: string;
-    code: string;
-    image: any;
-  };
+  item: IVehicle;
   onPress?: (item: any) => void;
 }
 
@@ -36,15 +32,9 @@ const CarStatusCard = ({ item, onPress }: ICarStatusProps) => {
       {item?.image && (
         <Image
           style={tw`h-6 w-6`}
-          source={
-            item.image === 1
-              ? require("@/assets/images/sprinter.png")
-              : item.image === 2
-              ? require("@/assets/images/trailer.png")
-              : item.image === 3
-              ? require("@/assets/images/transporter.png")
-              : require("@/assets/images/empty.png")
-          }
+          source={{
+            uri: item.image,
+          }}
         />
       )}
     </TouchableOpacity>

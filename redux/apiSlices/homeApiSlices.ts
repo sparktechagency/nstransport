@@ -1,12 +1,14 @@
+import { ICategories, IStatistics } from "../interface/interface";
+
 import { api } from "../api/baseApi";
 
 const homeSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    getStatistic: builder.query<any, any>({
+    getStatistic: builder.query<IStatistics, any>({
       query: () => ({
         url: `statistic`,
       }),
-      providesTags: ["home"],
+      providesTags: ["home", "vehicle"],
     }),
     getSearchVehicle: builder.query<any, any>({
       query: ({ type, search, filter, category }) => ({
@@ -14,7 +16,7 @@ const homeSlice = api.injectEndpoints({
       }),
       providesTags: ["vehicle"],
     }),
-    getCategories: builder.query<any, any>({
+    getCategories: builder.query<ICategories, any>({
       query: () => ({
         url: `/category`,
       }),

@@ -1,48 +1,81 @@
 import { IconArrayUpCorner, IconPlusWhite } from "@/icons/icons";
+import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
+import Loading from "@/components/common/Loading";
 import IwtButton from "@/lib/buttons/IwtButton";
 import tw from "@/lib/tailwind";
 import { useGetStatisticQuery } from "@/redux/apiSlices/homeApiSlices";
 import { useRouter } from "expo-router";
 import { SvgXml } from "react-native-svg";
 
-const Data = [
-  {
-    id: 1,
-    title: "Total Vehicle",
-    amount: "20",
-    color: "#D8FFF4",
-    icon: require("@/assets/images/car.png"),
-    route: "/vehicles/allvehicles",
-  },
-  {
-    id: 2,
-    title: "Available",
-    amount: "10",
-    color: "#E0F3FF",
-    icon: require("@/assets/images/car1.png"),
-    route: "/vehicles/availablevehicles",
-  },
-  {
-    id: 3,
-    title: "Booked",
-    amount: "10",
-    color: "#FFF6E7",
-    icon: require("@/assets/images/car2.png"),
-    route: "/vehicles/bookedvehicles",
-  },
-];
-
 export default function home() {
   const router = useRouter();
 
-  const { data: statistic } = useGetStatisticQuery({});
+  const { data: statistic, isLoading, isFetching } = useGetStatisticQuery({});
+
+  const [Data, setData] = useState<any>([
+    {
+      id: 1,
+      title: "Total Vehicle",
+
+      color: "#D8FFF4",
+      icon: require("@/assets/images/car.png"),
+      route: "/vehicles/allvehicles",
+    },
+    {
+      id: 2,
+      title: "Available",
+
+      color: "#E0F3FF",
+      icon: require("@/assets/images/car1.png"),
+      route: "/vehicles/availablevehicles",
+    },
+    {
+      id: 3,
+      title: "Booked",
+
+      color: "#FFF6E7",
+      icon: require("@/assets/images/car2.png"),
+      route: "/vehicles/bookedvehicles",
+    },
+  ]);
+
+  useEffect(() => {
+    setData([
+      {
+        id: 1,
+        title: "Total Vehicle",
+        amount: statistic?.data?.total_vehicle,
+        color: "#D8FFF4",
+        icon: require("@/assets/images/car.png"),
+        route: "/vehicles/allvehicles",
+      },
+      {
+        id: 2,
+        title: "Available",
+        amount: statistic?.data?.available,
+        color: "#E0F3FF",
+        icon: require("@/assets/images/car1.png"),
+        route: "/vehicles/availablevehicles",
+      },
+      {
+        id: 3,
+        title: "Booked",
+        amount: statistic?.data?.booked,
+        color: "#FFF6E7",
+        icon: require("@/assets/images/car2.png"),
+        route: "/vehicles/bookedvehicles",
+      },
+    ]);
+  }, [statistic]);
 
   return (
     <View style={tw` flex-1 bg-base`}>
+      {(isLoading || isFetching) && <Loading />}
+
       <ScrollView contentContainerStyle={tw`gap-2 mx-4 mt-12`}>
-        {Data?.map((item) => {
+        {Data?.map((item: any) => {
           return (
             <TouchableOpacity
               onPress={() => {
@@ -56,7 +89,7 @@ export default function home() {
                   {item.title}
                 </Text>
                 <Text style={tw`text-3xl text-black font-PoppinsSemiBold`}>
-                  {item.amount}
+                  {item?.amount}
                 </Text>
               </View>
 

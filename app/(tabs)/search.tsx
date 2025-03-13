@@ -1,29 +1,37 @@
-import { HIGHT, WIDTH } from "@/utils/utils";
 import { IconArrayDown, IconCloseBlack, IconSearchGray } from "@/icons/icons";
+import { PrimaryColor, WIDTH } from "@/utils/utils";
 import React, { useState } from "react";
 import {
-  ScrollView,
+  ActivityIndicator,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 
-import { CalendarList } from "react-native-calendars";
 import CarStatusCard from "@/components/common/CarStatusCard";
 import NormalModal from "@/lib/modals/NormalModal";
-import { SvgXml } from "react-native-svg";
-import availblevehicle from "@/assets/database/avablievehicle.json";
 import tw from "@/lib/tailwind";
+import { useSearchVehicleQuery } from "@/redux/apiSlices/searchApiSlices";
+import { IVehicle } from "@/redux/interface/interface";
+import { CalendarList } from "react-native-calendars";
+import { SvgXml } from "react-native-svg";
 
 const today = new Date().toISOString().split("T")[0]; // Format YYYY-MM-DD
 
 export default function search() {
+  const [search, setSearch] = useState("");
+  const [selectVehicle, setSelectVehicle] = useState<IVehicle | null>(null);
+  const {
+    data: Search,
+    isFetching,
+    isLoading,
+  } = useSearchVehicleQuery({
+    search: search,
+  });
+
   const [selectVehicleModal, setSelectVehicleModal] = useState(false);
   const [startDateModal, setStartDateModal] = useState(false);
-  const [search, setSearch] = useState("");
-
-  const [selectVehicle, setSelectVehicle] = useState(null);
 
   const marked = selectVehicle?.booked?.reduce((acc, date) => {
     acc[date] = {
@@ -79,8 +87,9 @@ export default function search() {
       <NormalModal
         setVisible={setSelectVehicleModal}
         visible={selectVehicleModal}
+        scrollable
       >
-        <View style={tw`bg-white rounded-md p-3 gap-5`}>
+        <View style={tw`bg-white rounded-md p-3 gap-5 `}>
           {/* header parts  */}
           <View style={tw`flex-row justify-between items-center`}>
             <View />
@@ -105,16 +114,14 @@ export default function search() {
             </View>
             {/* Schedules  */}
 
-            <View
-              style={[
-                tw`border border-gray-300 rounded-2xl p-3 `,
-                { height: HIGHT * 0.5 },
-              ]}
-            >
-              <ScrollView contentContainerStyle={tw`gap-3`}>
-                {availblevehicle
-                  ?.filter((s) => s.title.includes(search))
-                  .map((item, i) => {
+            <View style={[tw`border border-gray-300 rounded-2xl p-3 `]}>
+              <View style={tw`gap-3 min-h-96 `}>
+                {isFetching || isLoading ? (
+                  <View style={tw`flex-1 justify-center items-center `}>
+                    <ActivityIndicator color={PrimaryColor} size={"large"} />
+                  </View>
+                ) : (
+                  Search?.data?.map((item, i) => {
                     return (
                       <CarStatusCard
                         onPress={(item) => {
@@ -125,8 +132,9 @@ export default function search() {
                         item={item}
                       />
                     );
-                  })}
-              </ScrollView>
+                  })
+                )}
+              </View>
             </View>
           </View>
         </View>
