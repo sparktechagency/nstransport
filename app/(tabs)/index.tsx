@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
+  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -19,7 +20,12 @@ import { SvgXml } from "react-native-svg";
 export default function home() {
   const router = useRouter();
 
-  const { data: statistic, isLoading, isFetching } = useGetStatisticQuery({});
+  const {
+    data: statistic,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useGetStatisticQuery({});
 
   const [Data, setData] = useState<any>([
     {
@@ -81,7 +87,16 @@ export default function home() {
     <View style={tw` flex-1 bg-base`}>
       {/* {(isLoading || isFetching) && <Loading />} */}
 
-      <ScrollView contentContainerStyle={tw`gap-2 mx-4 mt-12`}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            colors={[PrimaryColor]}
+            refreshing={isFetching}
+            onRefresh={refetch}
+          />
+        }
+        contentContainerStyle={tw`gap-2 mx-4 mt-12`}
+      >
         {Data?.map((item: any) => {
           return (
             <TouchableOpacity
