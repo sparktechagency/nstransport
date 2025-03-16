@@ -9,6 +9,12 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "infoPlist": {
+        "UIViewControllerBasedStatusBarAppearance": true,
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      },
       "supportsTablet": true,
       "bundleIdentifier": "com.arifbiswas.nstransport"
     },

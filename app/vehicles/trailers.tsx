@@ -1,9 +1,11 @@
+import { HIGHT, PrimaryColor } from "@/utils/utils";
 import React, { useState } from "react";
-import { FlatList, TextInput, View } from "react-native";
+import { FlatList, RefreshControl, TextInput, View } from "react-native";
 
 import VehicleCard from "@/components/common/VehicleCard";
 import { IconSearchGray } from "@/icons/icons";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
+import EmptyCard from "@/lib/Empty/EmptyCard";
 import tw from "@/lib/tailwind";
 import { useGetSearchVehicleQuery } from "@/redux/apiSlices/homeApiSlices";
 import { useRouter } from "expo-router";
@@ -18,6 +20,7 @@ const trailers = () => {
     data: Trailer,
     isFetching: TrailerFetching,
     isLoading: TrailerLoading,
+    refetch: TrailerRefetch,
   } = useGetSearchVehicleQuery({
     category: "Trailer",
     type: "total",
@@ -52,8 +55,23 @@ const trailers = () => {
       </View>
       {/* all Available vehicles */}
       <FlatList
+        refreshControl={
+          <RefreshControl
+            colors={[PrimaryColor]}
+            refreshing={TrailerLoading || TrailerFetching}
+            onRefresh={() => {
+              TrailerRefetch();
+            }}
+          />
+        }
         contentContainerStyle={tw`pt-4 pb-8 gap-3 px-4`}
         data={Trailer?.data}
+        ListEmptyComponent={
+          <EmptyCard
+            hight={HIGHT * 0.6}
+            isLoading={TrailerFetching || TrailerLoading}
+          />
+        }
         renderItem={({ item, index }) => {
           return (
             <VehicleCard

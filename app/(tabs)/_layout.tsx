@@ -19,7 +19,15 @@ const TabBarButton = (props: any) => {
 
 export default function TabRoutes() {
   return (
-    <Tabs initialRouteName="index">
+    <Tabs
+      initialRouteName="index"
+      screenOptions={{
+        tabBarHideOnKeyboard: true,
+        tabBarActiveTintColor: "#fff",
+        tabBarInactiveTintColor: "#fff",
+        tabBarStyle: tw`h-18  pt-3 pb-0 shadow-lg `,
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
@@ -32,8 +40,8 @@ export default function TabRoutes() {
               <SvgXml xml={IconHomeOutLine} />
             );
           },
-          tabBarStyle: tw`h-18 pt-3 shadow-lg  `,
-          //   tabBarItemStyle: tw`border-b-4 border-b-primary px-1 rounded-md`,
+          // tabBarStyle: tw` pt-3 shadow-lg `,
+          // // tabBarItemStyle: tw`border-b-4 border-b-primary px-1 rounded-md`,
 
           tabBarLabel(props) {
             return (
@@ -72,8 +80,6 @@ export default function TabRoutes() {
               <SvgXml xml={IconSearchOutLine} />
             );
           },
-          tabBarStyle: tw`h-18 pt-3 shadow-lg `,
-          //   tabBarItemStyle: tw`border-b-4 border-b-primary px-1 rounded-md`,
 
           tabBarLabel(props) {
             return (
@@ -112,8 +118,6 @@ export default function TabRoutes() {
               <SvgXml xml={IconCarOutLine} />
             );
           },
-          tabBarStyle: tw`h-18 pt-3 shadow-lg `,
-          //   tabBarItemStyle: tw`border-b-4 border-b-primary px-1 rounded-md`,
 
           tabBarLabel(props) {
             return (

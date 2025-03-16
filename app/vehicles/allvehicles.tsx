@@ -13,6 +13,7 @@ import { useGetSearchVehicleQuery } from "@/redux/apiSlices/homeApiSlices";
 import { HIGHT } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { RefreshControl } from "react-native";
 import { SvgXml } from "react-native-svg";
 
 const allvehicles = () => {
@@ -22,7 +23,12 @@ const allvehicles = () => {
   const [filter, setFIlter] = useState("");
   const [search, setSearch] = useState("");
 
-  const { data: allvehicles } = useGetSearchVehicleQuery({
+  const {
+    data: allvehicles,
+    isFetching: allvehiclesFetching,
+    isLoading: allvehiclesLoading,
+    refetch: allvehiclesRefetch,
+  } = useGetSearchVehicleQuery({
     search: search,
     filter: filter,
     type: "total",
@@ -70,7 +76,20 @@ const allvehicles = () => {
       {/* all Available vehicles */}
       <FlatList
         contentContainerStyle={tw`pt-4 pb-8 gap-3 px-4`}
-        ListEmptyComponent={<EmptyCard hight={HIGHT * 0.6} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={allvehiclesFetching}
+            onRefresh={() => {
+              allvehiclesRefetch();
+            }}
+          />
+        }
+        ListEmptyComponent={
+          <EmptyCard
+            hight={HIGHT * 0.6}
+            isLoading={allvehiclesLoading || allvehiclesFetching}
+          />
+        }
         data={allvehicles?.data}
         renderItem={({ item, index }) => {
           return (

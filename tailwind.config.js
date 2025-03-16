@@ -1,5 +1,4 @@
-const plugin = require("tailwindcss/plugin");
-
+const { Platform } = require("react-native");
 module.exports = {
   theme: {
     screens: {
@@ -7,6 +6,9 @@ module.exports = {
       md: "400px",
       lg: "880px",
       tablet: "1024px",
+      ios: Platform.OS === "ios",
+      android: Platform.OS === "android",
+      // Add more screen sizes here
     },
     extend: {
       fontFamily: {
@@ -80,19 +82,4 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    plugin(({ addUtilities }) => {
-      addUtilities({
-        ".btn": {
-          padding: 3,
-          borderRadius: 10,
-          textTransform: `uppercase`,
-          backgroundColor: `#333`,
-        },
-        ".resize-repeat": {
-          resizeMode: `repeat`,
-        },
-      });
-    }),
-  ],
 };

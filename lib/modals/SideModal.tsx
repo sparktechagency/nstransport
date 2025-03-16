@@ -1,7 +1,7 @@
+import { Platform, Pressable } from "react-native";
 import { Dialog, PanningProvider } from "react-native-ui-lib";
 
 import React from "react";
-import { Pressable } from "react-native";
 import tw from "../tailwind";
 
 interface SideModalProps {
@@ -36,7 +36,16 @@ const SideModal = ({
           panDirection={PanningProvider.Directions.DOWN}
           containerStyle={tw` bg-base rounded-t-2xl`}
         >
-          <Pressable disabled style={[tw`bg-white py-1 `, containerStyle]}>
+          <Pressable
+            disabled
+            style={[
+              tw`bg-white py-1 ios:pb-12`,
+              containerStyle,
+              {
+                paddingBottom: Platform.OS === "ios" ? 20 : 0,
+              },
+            ]}
+          >
             {children}
           </Pressable>
         </Dialog>
