@@ -1,23 +1,33 @@
-import { FlatList, TextInput, View } from "react-native";
 import { IconSearchGray, IconThreeLine } from "@/icons/icons";
 import React, { useState } from "react";
+import { FlatList, TextInput, View } from "react-native";
 
+import VehicleCard from "@/components/common/VehicleCard";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
 import IwtButton from "@/lib/buttons/IwtButton";
-import SideModal from "@/lib/modals/SideModal";
-import { SvgXml } from "react-native-svg";
 import TButton from "@/lib/buttons/TButton";
-import VehicleCard from "@/components/common/VehicleCard";
-import availblevehicle from "@/assets/database/avablievehicle.json";
+import EmptyCard from "@/lib/Empty/EmptyCard";
+import SideModal from "@/lib/modals/SideModal";
 import tw from "@/lib/tailwind";
+import { useGetSearchVehicleQuery } from "@/redux/apiSlices/homeApiSlices";
+import { HIGHT } from "@/utils/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { SvgXml } from "react-native-svg";
 
 const allvehicles = () => {
   const router = useRouter();
 
   const [showModal, setShowModal] = useState(false);
-  const [filter, setFIlter] = useState("All");
+  const [filter, setFIlter] = useState("");
   const [search, setSearch] = useState("");
+
+  const { data: allvehicles } = useGetSearchVehicleQuery({
+    search: search,
+    filter: filter,
+    type: "total",
+  });
+  // console.log(allvehicles);
   return (
     <View style={tw` flex-1 bg-base`}>
       {/* header part  */}
@@ -60,25 +70,19 @@ const allvehicles = () => {
       {/* all Available vehicles */}
       <FlatList
         contentContainerStyle={tw`pt-4 pb-8 gap-3 px-4`}
-        data={availblevehicle
-          ?.filter((s) => {
-            return s.title.includes(search);
-          })
-          .filter((s) => {
-            return filter === "All"
-              ? s
-              : filter === "Available"
-              ? s.book === false
-              : s.book === true;
-          })}
+        ListEmptyComponent={<EmptyCard hight={HIGHT * 0.6} />}
+        data={allvehicles?.data}
         renderItem={({ item, index }) => {
           return (
             <VehicleCard
-              onPress={() => {
-                router.push({
-                  pathname: "/vehicles/booking",
-                  params: { id: item.id },
-                });
+              onPress={async () => {
+                if (item?.book) {
+                  AsyncStorage.setItem("booked", JSON.stringify(item));
+                  router.push("/vehicles/booked");
+                } else {
+                  AsyncStorage.setItem("vehicle", JSON.stringify(item));
+                  router.push("/vehicles/booking");
+                }
               }}
               item={item}
             />
@@ -93,7 +97,7 @@ const allvehicles = () => {
           <TButton
             title="All"
             onPress={() => {
-              setFIlter("All");
+              setFIlter("");
               setShowModal(false);
             }}
             containerStyle={tw`bg-transparent h-14`}
@@ -101,7 +105,7 @@ const allvehicles = () => {
           />
           <TButton
             onPress={() => {
-              setFIlter("Available");
+              setFIlter("available");
               setShowModal(false);
             }}
             title="Available"
@@ -110,7 +114,7 @@ const allvehicles = () => {
           />
           <TButton
             onPress={() => {
-              setFIlter("Booked");
+              setFIlter("booked");
               setShowModal(false);
             }}
             title="Booked"

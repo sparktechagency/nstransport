@@ -1,23 +1,18 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import { IconArrayUpCornerWithShadow } from "@/icons/icons";
-import React from "react";
-import { SvgXml } from "react-native-svg";
 import TButton from "@/lib/buttons/TButton";
 import tw from "@/lib/tailwind";
+import { IVehicle } from "@/redux/interface/interface";
+import React from "react";
+import { SvgXml } from "react-native-svg";
 
 interface IVehiclesCardProps {
-  item: {
-    id: number;
-    title: string;
-    code: string;
-    image: number;
-    book: boolean;
-    booked: string[];
-  };
+  item: IVehicle;
   variant?: "showcase" | "mange";
   containerStyle?: any;
   onPress?: () => void;
+  disable?: boolean;
 }
 
 const VehicleCard = ({
@@ -25,10 +20,11 @@ const VehicleCard = ({
   item,
   variant,
   containerStyle,
+  disable,
 }: IVehiclesCardProps) => {
   return (
     <TouchableOpacity
-      disabled={item?.book}
+      disabled={disable}
       onPress={() => onPress && onPress()}
       style={[
         tw`bg-white relative border-t-4 border-[${
@@ -47,18 +43,12 @@ const VehicleCard = ({
       </View>
       {variant == "mange" ? (
         <>
-          {item?.image && (
+          {item?.category && (
             <Image
               style={tw`h-16 w-16`}
-              source={
-                item.image === 1
-                  ? require("@/assets/images/sprinter.png")
-                  : item.image === 2
-                  ? require("@/assets/images/trailer.png")
-                  : item.image === 3
-                  ? require("@/assets/images/transporter.png")
-                  : require("@/assets/images/empty.png")
-              }
+              source={{
+                uri: item?.category?.icon,
+              }}
             />
           )}
         </>

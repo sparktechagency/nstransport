@@ -1,18 +1,24 @@
-import { FlatList, TextInput, View } from "react-native";
 import React, { useState } from "react";
+import { FlatList, TextInput, View } from "react-native";
 
-import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
-import { IconSearchGray } from "@/icons/icons";
-import { SvgXml } from "react-native-svg";
 import VehicleCard from "@/components/common/VehicleCard";
-import availblevehicle from "@/assets/database/avablievehicle.json";
+import { IconSearchGray } from "@/icons/icons";
+import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
 import tw from "@/lib/tailwind";
+import { useGetSearchVehicleQuery } from "@/redux/apiSlices/homeApiSlices";
 import { useRouter } from "expo-router";
+import { SvgXml } from "react-native-svg";
 
 const bookedvehicles = () => {
   const router = useRouter();
 
   const [search, setSearch] = useState("");
+
+  const { data: allvehicles } = useGetSearchVehicleQuery({
+    search: search,
+    type: "booked",
+  });
+
   return (
     <View style={tw` flex-1 bg-base`}>
       {/* header part  */}
@@ -21,11 +27,7 @@ const bookedvehicles = () => {
           router.back();
         }}
         titleStyle={tw``}
-        title={`Booked vehicles - ${
-          availblevehicle?.filter((s) => {
-            return s.book === false;
-          }).length
-        }`}
+        title={`Booked vehicles - ${allvehicles?.data?.length}`}
       />
 
       {/* body section  */}
@@ -46,13 +48,7 @@ const bookedvehicles = () => {
       {/* all Available vehicles */}
       <FlatList
         contentContainerStyle={tw`pt-4 pb-8 gap-3 px-4`}
-        data={availblevehicle
-          ?.filter((s) => {
-            return s.title.includes(search);
-          })
-          .filter((s) => {
-            return s.book === true;
-          })}
+        data={allvehicles?.data}
         renderItem={({ item, index }) => {
           return (
             <VehicleCard

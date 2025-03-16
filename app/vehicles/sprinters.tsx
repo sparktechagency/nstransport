@@ -1,18 +1,31 @@
-import { FlatList, TextInput, View } from "react-native";
 import React, { useState } from "react";
+import { FlatList, TextInput, View } from "react-native";
 
-import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
-import { IconSearchGray } from "@/icons/icons";
-import { SvgXml } from "react-native-svg";
 import VehicleCard from "@/components/common/VehicleCard";
-import availblevehicle from "@/assets/database/avablievehicle.json";
+import { IconSearchGray } from "@/icons/icons";
+import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
+import EmptyCard from "@/lib/Empty/EmptyCard";
 import tw from "@/lib/tailwind";
+import { useGetSearchVehicleQuery } from "@/redux/apiSlices/homeApiSlices";
+import { HIGHT } from "@/utils/utils";
 import { useRouter } from "expo-router";
+import { SvgXml } from "react-native-svg";
 
 const sprinters = () => {
   const router = useRouter();
 
   const [search, setSearch] = useState("");
+
+  const {
+    data: Sprinter,
+    isFetching: SprinterFetching,
+    isLoading: SprinterLoading,
+  } = useGetSearchVehicleQuery({
+    category: "Sprinter",
+    type: "total",
+    search: search,
+  });
+
   return (
     <View style={tw` flex-1 bg-base`}>
       {/* header part  */}
@@ -21,11 +34,7 @@ const sprinters = () => {
           router.back();
         }}
         titleStyle={tw``}
-        title={`Sprinters - ${
-          availblevehicle?.filter((s) => {
-            return s.book === false;
-          }).length
-        }`}
+        title={`Sprinters - ${Sprinter?.data?.length}`}
       />
 
       {/* body section  */}
@@ -46,13 +55,10 @@ const sprinters = () => {
       {/* all Available vehicles */}
       <FlatList
         contentContainerStyle={tw`pt-4 pb-8 gap-3 px-4`}
-        data={availblevehicle
-          ?.filter((s) => {
-            return s.title.includes(search);
-          })
-          .filter((s) => {
-            return s.book === false;
-          })}
+        ListEmptyComponent={
+          <EmptyCard hight={HIGHT * 0.6} isLoading={SprinterFetching} />
+        }
+        data={Sprinter?.data}
         renderItem={({ item, index }) => {
           return (
             <VehicleCard

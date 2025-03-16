@@ -1,4 +1,4 @@
-import { ICategories, IStatistics } from "../interface/interface";
+import { IStatistics, IVehicles } from "../interface/interface";
 
 import { api } from "../api/baseApi";
 
@@ -10,18 +10,21 @@ const homeSlice = api.injectEndpoints({
       }),
       providesTags: ["home", "vehicle"],
     }),
-    getSearchVehicle: builder.query<any, any>({
-      query: ({ type, search, filter, category }) => ({
+    getSearchVehicle: builder.query<
+      IVehicles,
+      {
+        type?: "total" | "booked" | "available";
+        search?: string;
+        filter?: string;
+        category?: "Sprinter" | "Car Transporter" | "Trailer";
+      }
+    >({
+      query: ({ type = "total", search = "", filter = "", category = "" }) => ({
         url: `/search_by_type?type=${type}&search=${search}&filter=${filter}&category=${category}`,
       }),
       providesTags: ["vehicle"],
     }),
-    getCategories: builder.query<ICategories, any>({
-      query: () => ({
-        url: `/category`,
-      }),
-      providesTags: ["category"],
-    }),
+
     // updateAdditional: builder.mutation({
     //     query: data => ({
     //         url: `/additional`,
@@ -38,14 +41,7 @@ const homeSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["vehicle"],
     }),
-    addVehicle: builder.mutation<any, { message: string }>({
-      query: (data) => ({
-        url: `vehicle`,
-        method: "POST",
-        body: data,
-      }),
-      invalidatesTags: ["vehicle"],
-    }),
+
     // deleteAdditional: builder.mutation({
     //     query: id => ({
     //         url: `/additional/${id}`,
@@ -57,12 +53,11 @@ const homeSlice = api.injectEndpoints({
 });
 
 export const {
-  useAddVehicleMutation,
   useBookingMutation,
-  useGetCategoriesQuery,
+
   useGetSearchVehicleQuery,
   useGetStatisticQuery,
-  useLazyGetCategoriesQuery,
+
   useLazyGetSearchVehicleQuery,
   useLazyGetStatisticQuery,
 } = homeSlice;

@@ -1,10 +1,11 @@
 import { api } from "../api/baseApi";
+import { IMVehicles } from "../interface/interface";
 
 const mangeSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    getVehicles: builder.query<any, any>({
-      query: ({ page, limit }) => ({
-        url: `vehicle?per_page=${page}&limit=${limit}`,
+    getVehicles: builder.query<IMVehicles, any>({
+      query: ({ page, limit, search }) => ({
+        url: `vehicle?page=${page}&limit=${limit}&search=${search}`,
       }),
       providesTags: ["vehicle"],
     }),
@@ -18,7 +19,7 @@ const mangeSlice = api.injectEndpoints({
 
     editVehicle: builder.mutation<any, { id: string; data: any }>({
       query: ({ id, data }) => ({
-        url: `vehicle/`,
+        url: `vehicle/${id}`,
         method: "POST",
         body: data,
       }),

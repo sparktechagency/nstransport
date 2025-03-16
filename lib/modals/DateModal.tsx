@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
-import { Calendar } from "react-native-calendars";
-import NormalModal from "./NormalModal";
-import TButton from "../buttons/TButton";
 import dayjs from "dayjs";
+import { Calendar } from "react-native-calendars";
+import TButton from "../buttons/TButton";
 import tw from "../tailwind";
+import NormalModal from "./NormalModal";
 
 interface DateModalProps {
   visible: boolean;
@@ -24,7 +24,7 @@ const DateModal = ({
   selectedDate,
 }: DateModalProps) => {
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
-  const bookedDates = new Set(item?.booked || []);
+  const bookedDates = new Set(item?.booked ? item?.booked : []);
 
   const handleDateSelect = (day: any) => {
     const selectedDay = day.dateString;

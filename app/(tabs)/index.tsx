@@ -1,11 +1,18 @@
 import { IconArrayUpCorner, IconPlusWhite } from "@/icons/icons";
 import { useEffect, useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import Loading from "@/components/common/Loading";
 import IwtButton from "@/lib/buttons/IwtButton";
 import tw from "@/lib/tailwind";
 import { useGetStatisticQuery } from "@/redux/apiSlices/homeApiSlices";
+import { PrimaryColor } from "@/utils/utils";
 import { useRouter } from "expo-router";
 import { SvgXml } from "react-native-svg";
 
@@ -72,7 +79,7 @@ export default function home() {
 
   return (
     <View style={tw` flex-1 bg-base`}>
-      {(isLoading || isFetching) && <Loading />}
+      {/* {(isLoading || isFetching) && <Loading />} */}
 
       <ScrollView contentContainerStyle={tw`gap-2 mx-4 mt-12`}>
         {Data?.map((item: any) => {
@@ -88,9 +95,13 @@ export default function home() {
                 <Text style={tw` text-sm text-black font-PoppinsMedium`}>
                   {item.title}
                 </Text>
-                <Text style={tw`text-3xl text-black font-PoppinsSemiBold`}>
-                  {item?.amount}
-                </Text>
+                {isFetching || isLoading ? (
+                  <ActivityIndicator size={"small"} color={PrimaryColor} />
+                ) : (
+                  <Text style={tw`text-3xl text-black font-PoppinsSemiBold`}>
+                    {item?.amount}
+                  </Text>
+                )}
               </View>
 
               <View style={tw`flex-1`}>

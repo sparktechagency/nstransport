@@ -1,39 +1,74 @@
+import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
 import tw from "@/lib/tailwind";
+import { useGetSearchVehicleQuery } from "@/redux/apiSlices/homeApiSlices";
 import { useRouter } from "expo-router";
-import React from "react";
-
-const Data = [
-  {
-    id: 1,
-    title: "Sprinters",
-    amount: "8",
-    color: "#FFF5E3",
-    icon: require("@/assets/images/sprinter.png"),
-    route: "/vehicles/sprinters",
-  },
-  {
-    id: 2,
-    title: "Car Transporter",
-    amount: "8",
-    color: "#FFE0E3",
-    icon: require("@/assets/images/transporter.png"),
-    route: "/vehicles/transporter",
-  },
-  {
-    id: 3,
-    title: "Trailers",
-    amount: "8",
-    color: "#DDEEFF",
-    icon: require("@/assets/images/trailer.png"),
-    route: "/vehicles/trailers",
-  },
-];
 
 export default function availablevehicles() {
   const router = useRouter();
+
+  const [Data, setData] = useState<any[]>([]);
+
+  const {
+    data: Sprinter,
+    isFetching: SprinterFetching,
+    isLoading: SprinterLoading,
+  } = useGetSearchVehicleQuery({
+    category: "Sprinter",
+    type: "total",
+  });
+  const {
+    data: Transporter,
+    isFetching: TransporterFetching,
+    isLoading: TransporterLoading,
+  } = useGetSearchVehicleQuery({
+    category: "Car Transporter",
+    type: "total",
+  });
+  const {
+    data: Trailer,
+    isFetching: TrailerFetching,
+    isLoading: TrailerLoading,
+  } = useGetSearchVehicleQuery({
+    category: "Trailer",
+    type: "total",
+  });
+
+  // console.log(Sprinter);
+
+  useEffect(() => {
+    if (!SprinterFetching && !TransporterFetching && !TrailerFetching) {
+      setData([
+        {
+          id: 1,
+          title: "Sprinters",
+          amount: Sprinter?.data?.length,
+          color: "#FFF5E3",
+          icon: require("@/assets/images/sprinter.png"),
+          route: "/vehicles/sprinters",
+        },
+        {
+          id: 2,
+          title: "Car Transporter",
+          amount: Transporter?.data?.length,
+          color: "#FFE0E3",
+          icon: require("@/assets/images/transporter.png"),
+          route: "/vehicles/transporter",
+        },
+        {
+          id: 3,
+          title: "Trailers",
+          amount: Trailer?.data?.length,
+          color: "#DDEEFF",
+          icon: require("@/assets/images/trailer.png"),
+          route: "/vehicles/trailers",
+        },
+      ]);
+    }
+  }, [SprinterFetching, TransporterFetching, TrailerFetching]);
+
   return (
     <View style={tw` flex-1 bg-base`}>
       <BackWithComponent

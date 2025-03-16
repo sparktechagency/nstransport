@@ -3,7 +3,7 @@ import * as yup from "yup";
 import {
   useAddVehicleMutation,
   useGetCategoriesQuery,
-} from "@/redux/apiSlices/homeApiSlices";
+} from "@/redux/apiSlices/manageApiSlices";
 import { Image, ScrollView, Text, TextInput, View } from "react-native";
 
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
