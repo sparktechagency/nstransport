@@ -23,7 +23,7 @@ const transporter = () => {
     refetch: TransporterRefetch,
   } = useGetSearchVehicleQuery({
     category: "Car Transporter",
-    type: "total",
+    type: "available",
     search: search,
   });
 

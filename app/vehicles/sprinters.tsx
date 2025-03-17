@@ -23,7 +23,7 @@ const sprinters = () => {
     refetch: SprinterRefetch,
   } = useGetSearchVehicleQuery({
     category: "Sprinter",
-    type: "total",
+    type: "available",
     search: search,
   });
 

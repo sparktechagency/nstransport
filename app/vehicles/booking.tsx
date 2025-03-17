@@ -17,10 +17,11 @@ import { useToast } from "@/lib/modals/Toaster";
 import tw from "@/lib/tailwind";
 import { useBookingMutation } from "@/redux/apiSlices/homeApiSlices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import { Formik } from "formik";
+import moment from "moment";
+import DatePicker from "react-native-date-picker";
 import { Dropdown } from "react-native-element-dropdown";
 import { SvgXml } from "react-native-svg";
 
@@ -59,7 +60,7 @@ export default function booking() {
 
   const handleBookingCar = async (values: any) => {
     if (selectVehicle?.id) values.vehicle_id = selectVehicle.id;
-
+    console.log(values);
     try {
       const res = await bookingService(values).unwrap();
       // console.log(res);
@@ -271,8 +272,8 @@ export default function booking() {
                         >
                           Booking Time
                         </Text>
-                        {(errors.booking_time_from ||
-                          errors.booking_time_to) && (
+                        {(errors?.booking_time_from ||
+                          errors?.booking_time_to) && (
                           <Text
                             style={tw`text-red-500 text-xs font-PoppinsRegular`}
                           >
@@ -289,7 +290,10 @@ export default function booking() {
                             style={tw`text-sm text-gray-500 font-PoppinsRegular`}
                           >
                             {values?.booking_time_from
-                              ? values?.booking_time_from
+                              ? moment(
+                                  values?.booking_time_from,
+                                  "H:mm"
+                                ).format("hh:mm A")
                               : "Select start time"}
                           </Text>
                           <SvgXml xml={IconCalendar} />
@@ -303,7 +307,9 @@ export default function booking() {
                             style={tw`text-sm text-gray-500 font-PoppinsRegular`}
                           >
                             {values?.booking_time_to
-                              ? values?.booking_time_to
+                              ? moment(values?.booking_time_to, "H:mm").format(
+                                  "hh:mm A"
+                                )
                               : "Select end time"}
                           </Text>
                           <SvgXml xml={IconCalendar} />
@@ -371,32 +377,31 @@ export default function booking() {
             </View>
 
             {/* time picker  */}
+            <DatePicker
+              modal
+              mode="time"
+              is24hourSource="device"
+              open={startTimeModal || endTimeModal}
+              date={date}
+              onConfirm={(date) => {
+                if (startTimeModal) {
+                  setFieldValue(
+                    "booking_time_from",
+                    dayjs(date).format("HH:mm")
+                  );
+                  setStartTimeModal(false);
+                }
+                if (endTimeModal) {
+                  setFieldValue("booking_time_to", dayjs(date).format("HH:mm"));
+                  setEndTimeModal(false);
+                }
+              }}
+              onCancel={() => {
+                setStartTimeModal(false);
+                setEndTimeModal(false);
+              }}
+            />
 
-            {(startTimeModal || endTimeModal) && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                mode={"time"}
-                is24Hour={true}
-                onChange={(event, selectedDate) => {
-                  const currentDate = selectedDate;
-                  if (startTimeModal) {
-                    setFieldValue(
-                      "booking_time_from",
-                      dayjs(currentDate).format("HH:mm")
-                    );
-                    setStartTimeModal(false);
-                  }
-                  if (endTimeModal) {
-                    setFieldValue(
-                      "booking_time_to",
-                      dayjs(currentDate).format("HH:mm")
-                    );
-                    setEndTimeModal(false);
-                  }
-                }}
-              />
-            )}
             {/* date picker  */}
             <DateModal
               item={selectVehicle}

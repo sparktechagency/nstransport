@@ -17,7 +17,7 @@ export default function availablevehicles() {
     isLoading: SprinterLoading,
   } = useGetSearchVehicleQuery({
     category: "Sprinter",
-    type: "total",
+    type: "available",
   });
   const {
     data: Transporter,
@@ -25,7 +25,7 @@ export default function availablevehicles() {
     isLoading: TransporterLoading,
   } = useGetSearchVehicleQuery({
     category: "Car Transporter",
-    type: "total",
+    type: "available",
   });
   const {
     data: Trailer,
@@ -33,7 +33,7 @@ export default function availablevehicles() {
     isLoading: TrailerLoading,
   } = useGetSearchVehicleQuery({
     category: "Trailer",
-    type: "total",
+    type: "available",
   });
 
   // console.log(Sprinter);

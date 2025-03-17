@@ -2,12 +2,11 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 
-import { IconCalendar } from "@/icons/icons";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
 import tw from "@/lib/tailwind";
 import { IVehicle } from "@/redux/interface/interface";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SvgXml } from "react-native-svg";
+import moment from "moment";
 
 export default function bookingConfirm() {
   const { id } = useLocalSearchParams();
@@ -76,75 +75,7 @@ export default function bookingConfirm() {
               </Text>
             </View>
           </View>
-          <View style={tw`gap-1 `}>
-            <Text style={tw`text-base text-black font-PoppinsSemiBold px-1`}>
-              Booking Type
-            </Text>
-            <View
-              style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-between`}
-            >
-              <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
-                {booking?.type}
-              </Text>
-            </View>
-          </View>
 
-          {booking?.type === "single" && (
-            <>
-              <View style={tw`gap-2`}>
-                <Text
-                  style={tw`text-base text-black font-PoppinsSemiBold px-1`}
-                >
-                  Booking Date
-                </Text>
-                <View>
-                  <View
-                    style={tw`bg-white h-12 p-2 rounded-md flex-row items-center justify-between`}
-                  >
-                    <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
-                      {booking?.data?.map((date) => {
-                        return (
-                          <View key={date} style={tw`gap-3`}>
-                            <Text style={tw`p-1 rounded-md`}>{date}</Text>
-                          </View>
-                        );
-                      })}
-                    </Text>
-                    <SvgXml xml={IconCalendar} />
-                  </View>
-                </View>
-              </View>
-              <View style={tw`gap-2`}>
-                <Text
-                  style={tw`text-base text-black font-PoppinsSemiBold px-1`}
-                >
-                  Booking Time
-                </Text>
-
-                <View>
-                  <View
-                    style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-between`}
-                  >
-                    <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
-                      {booking?.start_time}
-                    </Text>
-                    <SvgXml xml={IconCalendar} />
-                  </View>
-                </View>
-                <View>
-                  <View
-                    style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-between`}
-                  >
-                    <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
-                      {booking?.end_time}
-                    </Text>
-                    <SvgXml xml={IconCalendar} />
-                  </View>
-                </View>
-              </View>
-            </>
-          )}
-          {/* {booking?.type === "multiple" && ( */}
           <View style={tw`gap-2`}>
             <Text style={tw`text-base text-black font-PoppinsSemiBold px-1`}>
               Booking Date
@@ -167,7 +98,32 @@ export default function bookingConfirm() {
               </View>
             </View>
           </View>
-          {/* )} */}
+
+          <View style={tw`gap-2`}>
+            <Text style={tw`text-base text-black font-PoppinsSemiBold px-1`}>
+              Booking Time
+            </Text>
+
+            <View>
+              <View
+                style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-around`}
+              >
+                <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
+                  {moment(
+                    booking?.renter_info?.booking_time_from,
+                    "HH:mm:ss"
+                  ).format("hh:mm A")}
+                </Text>
+                <Text>-</Text>
+                <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
+                  {moment(
+                    booking?.renter_info?.booking_time_to,
+                    "HH:mm:ss"
+                  ).format("hh:mm A")}
+                </Text>
+              </View>
+            </View>
+          </View>
         </View>
       </ScrollView>
     </View>
