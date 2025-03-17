@@ -75,7 +75,11 @@ export default function availablevehicles() {
         onPress={() => {
           router.back();
         }}
-        title={"Available vehicles - 32"}
+        title={`Available vehicles - ${
+          (Sprinter?.data?.length ? Sprinter?.data?.length : 0) +
+          (Transporter?.data?.length ? Transporter?.data?.length : 0) +
+          (Trailer?.data?.length ? Trailer?.data?.length : 0)
+        }`}
       />
 
       <ScrollView contentContainerStyle={tw`gap-2 mx-4 mt-3`}>

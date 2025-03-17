@@ -42,7 +42,7 @@ const allvehicles = () => {
           router.back();
         }}
         titleStyle={tw``}
-        title={"All vehicles - 20"}
+        title={`All vehicles - ${allvehicles?.data?.length}`}
         ComponentBtn={
           <View style={tw``}>
             <IwtButton

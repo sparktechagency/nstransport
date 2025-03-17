@@ -98,32 +98,33 @@ export default function bookingConfirm() {
               </View>
             </View>
           </View>
+          {booking?.renter_info?.booking_time_from && (
+            <View style={tw`gap-2`}>
+              <Text style={tw`text-base text-black font-PoppinsSemiBold px-1`}>
+                Booking Time
+              </Text>
 
-          <View style={tw`gap-2`}>
-            <Text style={tw`text-base text-black font-PoppinsSemiBold px-1`}>
-              Booking Time
-            </Text>
-
-            <View>
-              <View
-                style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-around`}
-              >
-                <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
-                  {moment(
-                    booking?.renter_info?.booking_time_from,
-                    "HH:mm:ss"
-                  ).format("hh:mm A")}
-                </Text>
-                <Text>-</Text>
-                <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
-                  {moment(
-                    booking?.renter_info?.booking_time_to,
-                    "HH:mm:ss"
-                  ).format("hh:mm A")}
-                </Text>
+              <View>
+                <View
+                  style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-around`}
+                >
+                  <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
+                    {moment(
+                      booking?.renter_info?.booking_time_from,
+                      "HH:mm:ss"
+                    ).format("hh:mm A")}
+                  </Text>
+                  <Text>-</Text>
+                  <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
+                    {moment(
+                      booking?.renter_info?.booking_time_to,
+                      "HH:mm:ss"
+                    ).format("hh:mm A")}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
+          )}
         </View>
       </ScrollView>
     </View>
