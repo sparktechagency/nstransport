@@ -1,6 +1,8 @@
 import { BaseQueryFn, createApi } from "@reduxjs/toolkit/query/react";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 interface BaseQueryArgs extends AxiosRequestConfig {
   url: string;
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -16,20 +18,34 @@ const baseQueryWithRath: BaseQueryFn<BaseQueryArgs, unknown, unknown> = async (
   extraOptions
 ) => {
   try {
+    const token = await AsyncStorage.getItem("token");
+
+    // console.log(token);
+
     const result: AxiosResponse = await axios({
       // baseURL: 'http://192.168.12.140:8000/api',
-      baseURL: "http://182.252.68.227:8002/api/",
+      baseURL: "http://182.252.68.227:8002/api",
       ...args,
       url: args.url,
       method: args.method,
       data: args.body,
       headers: {
         ...args.headers,
+        Authorization: token ? `Bearer ${JSON.parse(token)}` : "",
       },
     });
 
     // console.log(result.data);
     // Check if response data is a string and malformed
+    if (result?.status === 403) {
+      AsyncStorage.removeItem("token");
+      AsyncStorage.removeItem("user");
+    }
+
+    if (result?.status === 401) {
+      AsyncStorage.removeItem("token");
+      AsyncStorage.removeItem("user");
+    }
     if (typeof result?.data === "string") {
       // if (!result.data.endsWith('}')) {
       const withCurly = (result.data += "}");
@@ -65,7 +81,7 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRath,
   endpoints: () => ({}),
-  tagTypes: ["home", "vehicle", "category"],
+  tagTypes: ["home", "vehicle", "category", "user"],
 });
 
 // export const imageUrl = 'http://192.168.12.160:7000/';

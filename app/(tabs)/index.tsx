@@ -1,4 +1,4 @@
-import { IconArrayUpCorner, IconPlusWhite } from "@/icons/icons";
+import { IconArrayUpCorner, IconLogOut, IconPlusWhite } from "@/icons/icons";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -14,6 +14,7 @@ import IwtButton from "@/lib/buttons/IwtButton";
 import tw from "@/lib/tailwind";
 import { useGetStatisticQuery } from "@/redux/apiSlices/homeApiSlices";
 import { PrimaryColor } from "@/utils/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { SvgXml } from "react-native-svg";
 
@@ -24,8 +25,13 @@ export default function home() {
     data: statistic,
     isLoading,
     isFetching,
+    error,
     refetch,
   } = useGetStatisticQuery({});
+
+  // console.log(statistic);
+
+  // console.log(error);
 
   const [Data, setData] = useState<any>([
     {
@@ -86,6 +92,22 @@ export default function home() {
   return (
     <View style={tw` flex-1 bg-base`}>
       {/* {(isLoading || isFetching) && <Loading />} */}
+
+      {/* header part  */}
+      <View style={tw` px-4 mt-4`}>
+        <TouchableOpacity
+          onPress={async () => {
+            AsyncStorage.removeItem("token");
+            AsyncStorage.removeItem("user");
+            router?.canDismiss() && router.dismissAll();
+            router.replace("/loading");
+          }}
+          style={tw`flex-row items-center gap-2 border border-red-200 p-2 rounded-lg self-start`}
+        >
+          <SvgXml xml={IconLogOut} />
+          <Text style={tw` text-base text-black font-sans`}>Logout</Text>
+        </TouchableOpacity>
+      </View>
 
       <ScrollView
         refreshControl={

@@ -2,15 +2,18 @@ import "react-native-reanimated";
 
 import * as SplashScreen from "expo-splash-screen";
 
+import { LogBox, SafeAreaView } from "react-native";
+
 import { ToastProvider } from "@/lib/modals/Toaster";
 import tw from "@/lib/tailwind";
 import store from "@/redux/store";
 import { loadAsync } from "expo-font";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
-import { SafeAreaView } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
+
+LogBox.ignoreAllLogs();
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -48,7 +51,7 @@ export default function RootLayout() {
           <ToastProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
               <Stack
-                initialRouteName="(tabs)"
+                initialRouteName="index"
                 screenOptions={{
                   headerShown: false,
                   animation: "slide_from_right",
@@ -58,6 +61,8 @@ export default function RootLayout() {
                   statusBarStyle: "dark",
                 }}
               >
+                <Stack.Screen name="index" />
+                <Stack.Screen name="loading" />
                 <Stack.Screen name="(tabs)" />
                 <Stack.Screen name="vehicles/booked" />
                 <Stack.Screen name="vehicles/booking" />

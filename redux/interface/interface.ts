@@ -72,3 +72,18 @@ export interface IMVehicles extends IFetch {
     data: IVehicle[];
   } & IPaginate;
 }
+
+export interface IUser {
+  id: number;
+  name: string;
+  role: string;
+  passcode: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IUsers extends IFetch {
+  data: {
+    data: IUser[];
+  } & IPaginate;
+}

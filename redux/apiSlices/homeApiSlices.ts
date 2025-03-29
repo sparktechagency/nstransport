@@ -6,7 +6,7 @@ const homeSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     getStatistic: builder.query<IStatistics, any>({
       query: () => ({
-        url: `statistic`,
+        url: `/statistic`,
       }),
       providesTags: ["home", "vehicle"],
     }),
