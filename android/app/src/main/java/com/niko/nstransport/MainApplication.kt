@@ -1,4 +1,4 @@
-package com.arifbiswas.nstransport
+package com.niko.nstransport
 
 import android.app.Application
 import android.content.res.Configuration

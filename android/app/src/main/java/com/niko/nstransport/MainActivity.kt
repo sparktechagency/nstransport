@@ -1,4 +1,4 @@
-package com.arifbiswas.nstransport
+package com.niko.nstransport
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
