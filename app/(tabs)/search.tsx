@@ -1,6 +1,3 @@
-import { IconArrayDown, IconCloseBlack, IconSearchGray } from "@/icons/icons";
-import { PrimaryColor, WIDTH } from "@/utils/utils";
-import React, { useState } from "react";
 import {
   ActivityIndicator,
   Text,
@@ -8,14 +5,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { IconArrayDown, IconCloseBlack, IconSearchGray } from "@/icons/icons";
+import { PrimaryColor, WIDTH } from "@/utils/utils";
+import React, { useState } from "react";
 
+import { CalendarList } from "react-native-calendars";
 import CarStatusCard from "@/components/common/CarStatusCard";
+import { IVehicle } from "@/redux/interface/interface";
 import NormalModal from "@/lib/modals/NormalModal";
+import { SvgXml } from "react-native-svg";
 import tw from "@/lib/tailwind";
 import { useSearchVehicleQuery } from "@/redux/apiSlices/searchApiSlices";
-import { IVehicle } from "@/redux/interface/interface";
-import { CalendarList } from "react-native-calendars";
-import { SvgXml } from "react-native-svg";
 
 const today = new Date().toISOString().split("T")[0]; // Format YYYY-MM-DD
 
@@ -89,7 +89,7 @@ export default function search() {
         visible={selectVehicleModal}
         scrollable
       >
-        <View style={tw`bg-white rounded-md p-3 gap-5 `}>
+        <View style={tw`bg-white  rounded-md p-3 gap-5 `}>
           {/* header parts  */}
           <View style={tw`flex-row justify-between items-center`}>
             <View />

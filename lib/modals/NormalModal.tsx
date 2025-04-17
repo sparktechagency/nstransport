@@ -1,7 +1,7 @@
 import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
 
-import React from "react";
 import { Modal } from "react-native-ui-lib";
+import React from "react";
 import tw from "../tailwind";
 
 interface NormalModalProps {
@@ -48,7 +48,7 @@ const NormalModal = ({
               style={[
                 tw`bg-secondary bg-opacity-10  w-full p-4 rounded-xl`,
                 containerStyle,
-                tw`tablet:w-[35%]`,
+                tw`tablet:w-[70%]`,
               ]}
             >
               {scrollable ? (
