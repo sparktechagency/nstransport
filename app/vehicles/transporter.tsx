@@ -49,6 +49,7 @@ const transporter = () => {
             onChangeText={(text) => setSearch(text)}
             placeholder="Search"
             style={tw`text-black flex-1`}
+            placeholderTextColor={tw.color("gray-400")}
           />
           <SvgXml xml={IconSearchGray} />
         </View>

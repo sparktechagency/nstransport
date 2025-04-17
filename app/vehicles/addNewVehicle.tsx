@@ -94,6 +94,7 @@ const addNewVehicle = () => {
                     onBlur={handleBlur("name")}
                     value={values.name}
                     placeholder="Enter vehicles name"
+                    placeholderTextColor={tw.color("gray-400")}
                     style={tw`bg-white h-12 rounded-md px-2`}
                   />
                 </View>
@@ -168,6 +169,7 @@ const addNewVehicle = () => {
                     onBlur={handleBlur("number_plate")}
                     value={values.number_plate}
                     placeholder="Enter number plate"
+                    placeholderTextColor={tw.color("gray-400")}
                     style={tw`bg-white h-12 rounded-md px-2`}
                   />
                 </View>

@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React from "react";
 import { OtpInput } from "react-native-otp-entry";
+import { useDeviceContext } from "twrnc";
 
 const index = () => {
   const router = useRouter();
@@ -50,7 +51,7 @@ const index = () => {
     if (token) {
       setLoading(false);
       setExit(true);
-      router?.dismissAll();
+      router.canDismiss() && router?.dismissAll();
       router?.replace("/(tabs)");
     } else {
       setLoading(false);
@@ -62,6 +63,7 @@ const index = () => {
     handleExit();
   }, []);
 
+  useDeviceContext(tw);
   return (
     <View style={tw`flex-1 bg-base justify-center items-center `}>
       {loading ? (
@@ -72,15 +74,18 @@ const index = () => {
       ) : (
         <>
           <ScrollView keyboardShouldPersistTaps="always">
-            <View style={tw` justify-center items-center`}>
-              <Image source={require("@/assets/images/logo.png")} />
+            <View style={tw`h-full md:min-h-[60%] justify-center items-center`}>
+              <Image
+                style={tw` h-72 aspect-square`}
+                source={require("@/assets/images/logo.png")}
+              />
 
               <Text
                 style={tw`mx-[10%] text-center text-2xl text-primary font-PoppinsSemiBold`}
               >
                 Please login with you passcode
               </Text>
-              <View style={tw`mt-10 px-5`}>
+              <View style={tw`mt-10 w-full lg:w-[80%] px-5`}>
                 <OtpInput
                   numberOfDigits={6}
                   focusColor={PrimaryColor}

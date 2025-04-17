@@ -157,6 +157,7 @@ export default function booking() {
                     onBlur={handleBlur("renter_name")}
                     value={values.renter_name}
                     placeholder="Enter ranter name"
+                    placeholderTextColor={tw.color("gray-400")}
                     style={tw`bg-white h-12 rounded-md px-2`}
                   />
                 </View>
@@ -180,6 +181,7 @@ export default function booking() {
                     onBlur={handleBlur("phone_number")}
                     value={values.phone_number}
                     placeholder="Enter phone number"
+                    placeholderTextColor={tw.color("gray-400")}
                     style={tw`bg-white h-12 rounded-md px-2`}
                   />
                 </View>

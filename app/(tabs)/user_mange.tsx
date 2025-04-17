@@ -204,7 +204,7 @@ const UserManage = () => {
             <TextInput
               style={tw`bg-gray-100 text-gray-800 rounded-lg p-3 mb-4 border border-gray-300`}
               placeholder="Name"
-              placeholderTextColor="#6B7280"
+              placeholderTextColor={tw.color("gray-400")}
               value={newUserName}
               onChangeText={setNewUserName}
             />
@@ -212,7 +212,7 @@ const UserManage = () => {
             <TextInput
               style={tw`bg-gray-100 text-gray-800 rounded-lg p-3 mb-6 border border-gray-300`}
               placeholder="6-digit Passcode"
-              placeholderTextColor="#6B7280"
+              placeholderTextColor={tw.color("gray-400")}
               keyboardType="numeric"
               maxLength={6}
               value={newUserPasscode}
@@ -255,7 +255,7 @@ const UserManage = () => {
             <TextInput
               style={tw`bg-gray-100 text-gray-800 rounded-lg p-3 mb-4 border border-gray-300`}
               placeholder="Name"
-              placeholderTextColor="#6B7280"
+              placeholderTextColor={tw.color("gray-400")}
               value={editUserName}
               onChangeText={setEditUserName}
             />
@@ -263,7 +263,7 @@ const UserManage = () => {
             <TextInput
               style={tw`bg-gray-100 text-gray-800 rounded-lg p-3 mb-6 border border-gray-300`}
               placeholder="6-digit Passcode"
-              placeholderTextColor="#6B7280"
+              placeholderTextColor={tw.color("gray-400")}
               keyboardType="numeric"
               maxLength={6}
               value={editUserPasscode}

@@ -139,6 +139,7 @@ const mange = () => {
         >
           <TextInput
             onChangeText={(text) => setSearch(text)}
+            placeholderTextColor={tw.color("gray-400")}
             placeholder="Search"
             style={tw`text-black flex-1`}
           />
@@ -253,6 +254,7 @@ const mange = () => {
                           onBlur={handleBlur("name")}
                           value={values.name}
                           placeholder="Enter vehicles name"
+                          placeholderTextColor={tw.color("gray-400")}
                           style={tw`bg-[#F0F0F0] h-12 rounded-md px-2`}
                         />
                       </View>
@@ -318,6 +320,7 @@ const mange = () => {
                           onBlur={handleBlur("number_plate")}
                           value={values.number_plate}
                           placeholder="Enter number plate"
+                          placeholderTextColor={tw.color("gray-400")}
                           style={tw`bg-[#F0F0F0] h-12 rounded-md px-2`}
                         />
                       </View>

@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
 import tw from "@/lib/tailwind";
 import { useGetSearchVehicleQuery } from "@/redux/apiSlices/homeApiSlices";
+import { PrimaryColor } from "@/utils/utils";
 import { useRouter } from "expo-router";
 
 export default function availablevehicles() {
@@ -15,6 +23,7 @@ export default function availablevehicles() {
     data: Sprinter,
     isFetching: SprinterFetching,
     isLoading: SprinterLoading,
+    refetch: SprinterRefetch,
   } = useGetSearchVehicleQuery({
     category: "Sprinter",
     type: "available",
@@ -23,6 +32,7 @@ export default function availablevehicles() {
     data: Transporter,
     isFetching: TransporterFetching,
     isLoading: TransporterLoading,
+    refetch: TransporterRefetch,
   } = useGetSearchVehicleQuery({
     category: "Car Transporter",
     type: "available",
@@ -31,6 +41,7 @@ export default function availablevehicles() {
     data: Trailer,
     isFetching: TrailerFetching,
     isLoading: TrailerLoading,
+    refetch: TrailerRefetch,
   } = useGetSearchVehicleQuery({
     category: "Trailer",
     type: "available",
@@ -82,7 +93,22 @@ export default function availablevehicles() {
         }`}
       />
 
-      <ScrollView contentContainerStyle={tw`gap-2 mx-4 mt-3`}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            colors={[PrimaryColor]}
+            refreshing={
+              SprinterFetching || TransporterFetching || TrailerFetching
+            }
+            onRefresh={() => {
+              SprinterRefetch();
+              TransporterRefetch();
+              TrailerRefetch();
+            }}
+          />
+        }
+        contentContainerStyle={tw`gap-2 mx-4 mt-3`}
+      >
         {Data?.map((item) => {
           return (
             <TouchableOpacity

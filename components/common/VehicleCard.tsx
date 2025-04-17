@@ -1,11 +1,9 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
-import { IconArrayUpCornerWithShadow } from "@/icons/icons";
 import TButton from "@/lib/buttons/TButton";
 import tw from "@/lib/tailwind";
 import { IVehicle } from "@/redux/interface/interface";
 import React from "react";
-import { SvgXml } from "react-native-svg";
 
 interface IVehiclesCardProps {
   item: IVehicle;
@@ -55,14 +53,14 @@ const VehicleCard = ({
       ) : (
         <View style={tw`gap-3`}>
           <TButton
-            title="Available"
+            title={item?.book ? "Booked" : "Available"}
             containerStyle={tw`bg-[${
               item?.book ? "#FF0000" : "#00A405"
             }] h-8 px-3`}
             titleStyle={tw`font-PoppinsRegular`}
           />
 
-          <SvgXml style={tw`self-end`} xml={IconArrayUpCornerWithShadow} />
+          {/* <SvgXml style={tw`self-end`} xml={IconArrayUpCornerWithShadow} /> */}
         </View>
       )}
     </TouchableOpacity>

@@ -4,8 +4,8 @@ module.exports = {
     screens: {
       sm: "300px",
       md: "400px",
-      lg: "880px",
-      tablet: "1024px",
+      lg: "700px",
+      tablet: "700px",
       ios: Platform.OS === "ios",
       android: Platform.OS === "android",
       // Add more screen sizes here

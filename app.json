@@ -13,16 +13,14 @@
         "UIViewControllerBasedStatusBarAppearance": true,
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
-        },
-        // Explicitly disable background modes that might include notifications
-        "UIBackgroundModes": []
+        }
       },
-      // Explicitly disable capabilities that might trigger the entitlement
       "usesAppleSignIn": false,
       "usesIcloudStorage": false,
       "associatedDomains": [],
       "supportsTablet": true,
-      "bundleIdentifier": "com.niko.nstransport"
+      "bundleIdentifier": "com.niko.nstransport",
+      "appleTeamId": "DZ3R86SPLG"
     },
     "android": {
       "adaptiveIcon": {

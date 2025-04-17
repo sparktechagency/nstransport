@@ -40,6 +40,7 @@ const bookedvehicles = () => {
           <TextInput
             onChangeText={(text) => setSearch(text)}
             placeholder="Search"
+            placeholderTextColor={tw.color("gray-400")}
             style={tw`text-black flex-1`}
           />
           <SvgXml xml={IconSearchGray} />
