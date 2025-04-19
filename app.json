@@ -13,7 +13,8 @@
         "UIViewControllerBasedStatusBarAppearance": true,
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
-        }
+        },
+        "UIBackgroundModes": []  // Remove "remote-notification" if present
       },
       "usesAppleSignIn": false,
       "usesIcloudStorage": false,
@@ -27,7 +28,9 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.niko.nstransport"
+      "package": "com.niko.nstransport",
+      "permissions": []
+   
     },
     "web": {
       "bundler": "metro",

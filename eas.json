@@ -20,7 +20,9 @@
     "production": {
       "autoIncrement": true,
       "ios": {
-        "simulator": true
+        "simulator": false,
+         "enterpriseProvisioning": "universal",
+        "buildConfiguration": "Release"
       }
     }
   },
