@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
 import TButton from "@/lib/buttons/TButton";
@@ -160,7 +160,24 @@ export default function bookingConfirm() {
           containerStyle={tw`bg-blue-600 w-1/2`}
         />
         <TButton
-          onPress={handleCancel}
+          onPress={() => {
+            Alert.alert(
+              "Cancel Booking",
+              "Are you sure you want to cancel this booking?",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "Yes",
+                  onPress: async () => {
+                    await handleCancel();
+                  },
+                },
+              ]
+            );
+          }}
           title="Cancel"
           containerStyle={tw`w-1/2 bg-red-600`}
         />
