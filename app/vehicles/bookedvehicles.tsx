@@ -6,6 +6,7 @@ import { IconSearchGray } from "@/icons/icons";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
 import tw from "@/lib/tailwind";
 import { useGetSearchVehicleQuery } from "@/redux/apiSlices/homeApiSlices";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { SvgXml } from "react-native-svg";
 
@@ -53,11 +54,14 @@ const bookedvehicles = () => {
         renderItem={({ item, index }) => {
           return (
             <VehicleCard
-              onPress={() => {
-                router.push({
-                  pathname: "/vehicles/booking",
-                  params: { id: item.id },
-                });
+              onPress={async () => {
+                if (item?.book) {
+                  AsyncStorage.setItem("booked", JSON.stringify(item));
+                  router.push("/vehicles/booked");
+                } else {
+                  AsyncStorage.setItem("vehicle", JSON.stringify(item));
+                  router.push("/vehicles/booking");
+                }
               }}
               item={item}
             />

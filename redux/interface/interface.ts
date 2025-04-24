@@ -44,6 +44,7 @@ export interface IVehicle {
   book?: boolean;
   booked?: string[];
   renter_info?: {
+    id: string;
     renter_name: string;
     phone: string;
     booking_time_from: string;

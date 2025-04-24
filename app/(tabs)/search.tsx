@@ -1,3 +1,6 @@
+import { IconArrayDown, IconCloseBlack, IconSearchGray } from "@/icons/icons";
+import { PrimaryColor, WIDTH } from "@/utils/utils";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Text,
@@ -5,17 +8,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { IconArrayDown, IconCloseBlack, IconSearchGray } from "@/icons/icons";
-import { PrimaryColor, WIDTH } from "@/utils/utils";
-import React, { useState } from "react";
 
-import { CalendarList } from "react-native-calendars";
 import CarStatusCard from "@/components/common/CarStatusCard";
-import { IVehicle } from "@/redux/interface/interface";
 import NormalModal from "@/lib/modals/NormalModal";
-import { SvgXml } from "react-native-svg";
 import tw from "@/lib/tailwind";
 import { useSearchVehicleQuery } from "@/redux/apiSlices/searchApiSlices";
+import { IVehicle } from "@/redux/interface/interface";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
+import { CalendarList } from "react-native-calendars";
+import { SvgXml } from "react-native-svg";
 
 const today = new Date().toISOString().split("T")[0]; // Format YYYY-MM-DD
 
@@ -28,6 +30,7 @@ export default function search() {
     isLoading,
   } = useSearchVehicleQuery({
     search: search,
+    per_page: 100,
   });
 
   const [selectVehicleModal, setSelectVehicleModal] = useState(false);
@@ -36,7 +39,7 @@ export default function search() {
   const marked = selectVehicle?.booked?.reduce((acc, date) => {
     acc[date] = {
       selected: true,
-      disableTouchEvent: true,
+      // disableTouchEvent: true,
       selectedColor: "#FF6060",
       selectedTextColor: "white",
     };
@@ -50,7 +53,14 @@ export default function search() {
   //   };
   // });
 
-  // console.log(marked);
+  const handleDayPress = (day) => {
+    if (selectVehicle?.booked?.includes(day.dateString)) {
+      // console.log(selectVehicle);
+      AsyncStorage.setItem("booked", JSON.stringify(selectVehicle));
+      setSelectVehicle(null);
+      router.push("/vehicles/booked");
+    }
+  };
 
   return (
     <View style={tw`flex-1 bg-base pt-12 px-4`}>
@@ -81,6 +91,7 @@ export default function search() {
           calendarWidth={WIDTH * 0.92}
           horizontal={false}
           staticHeader={true}
+          onDayPress={handleDayPress}
         />
       </View>
 

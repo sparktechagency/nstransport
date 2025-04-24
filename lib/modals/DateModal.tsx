@@ -24,10 +24,18 @@ const DateModal = ({
   selectedDate,
 }: DateModalProps) => {
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
+  // const [bookedDates, setBookedDates] = useState<string[]>([]);
   const bookedDates = new Set(item?.booked ? item?.booked : []);
 
   const handleDateSelect = (day: any) => {
     const selectedDay = day.dateString;
+    const today = dayjs().startOf("day");
+    const selectedDateObj = dayjs(selectedDay);
+
+    // Don't allow selection of past dates
+    if (selectedDateObj.isBefore(today, "day")) {
+      return;
+    }
 
     if (!range) {
       // Single date selection
@@ -42,8 +50,6 @@ const DateModal = ({
         } else if (!bookedDates.has(selectedDay)) {
           return [...prevDates, selectedDay]; // Add new date if not booked
         }
-        selectedDate(prevDates);
-        setVisible(false);
         return prevDates;
       });
     }
@@ -51,6 +57,7 @@ const DateModal = ({
 
   const getMarkedDates = () => {
     let marked: Record<string, any> = {};
+    const today = dayjs().startOf("day");
 
     // Mark booked dates as disabled
     if (item?.booked) {
@@ -77,9 +84,9 @@ const DateModal = ({
     });
 
     // Highlight today's date
-    const today = formatDate(new Date());
-    if (!marked[today]) {
-      marked[today] = {
+    const todayStr = formatDate(new Date());
+    if (!marked[todayStr]) {
+      marked[todayStr] = {
         customStyles: {
           container: tw`bg-primary rounded-full`,
           text: {
@@ -89,6 +96,25 @@ const DateModal = ({
         },
       };
     }
+
+    // Disable all past dates
+    Object.keys(marked).forEach((date) => {
+      if (dayjs(date).isBefore(today, "day")) {
+        marked[date] = {
+          ...marked[date],
+          disabled: true,
+          disableTouchEvent: true,
+          customStyles: {
+            container: tw`bg-gray-300 rounded-full`,
+            text: tw`text-gray-500`,
+          },
+        };
+      }
+    });
+
+    // Also disable all dates before today that aren't already marked
+    // This requires a more comprehensive approach with the calendar library
+    // We'll handle this in the minDate prop of the Calendar component
 
     return marked;
   };
@@ -106,6 +132,7 @@ const DateModal = ({
         markingType="custom"
         markedDates={getMarkedDates()}
         onDayPress={handleDateSelect}
+        minDate={formatDate(new Date())} // This prevents selection of past dates
       />
       {range && (
         <TButton

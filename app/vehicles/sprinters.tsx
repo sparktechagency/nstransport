@@ -8,6 +8,7 @@ import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
 import EmptyCard from "@/lib/Empty/EmptyCard";
 import tw from "@/lib/tailwind";
 import { useGetSearchVehicleQuery } from "@/redux/apiSlices/homeApiSlices";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { SvgXml } from "react-native-svg";
 
@@ -72,10 +73,8 @@ const sprinters = () => {
           return (
             <VehicleCard
               onPress={() => {
-                router.push({
-                  pathname: "/vehicles/booking",
-                  params: { id: item.id },
-                });
+                AsyncStorage.setItem("vehicle", JSON.stringify(item));
+                router.push("/vehicles/booking");
               }}
               item={item}
             />

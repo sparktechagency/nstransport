@@ -1,21 +1,23 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
+import TButton from "@/lib/buttons/TButton";
 import tw from "@/lib/tailwind";
+import { useCancelBookedMutation } from "@/redux/apiSlices/homeApiSlices";
 import { IVehicle } from "@/redux/interface/interface";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import moment from "moment";
 
 export default function bookingConfirm() {
-  const { id } = useLocalSearchParams();
-
   const router = useRouter();
 
   const [booking, setBooking] = useState<IVehicle | null>(null);
-
+  const [cancelVehicle, results] = useCancelBookedMutation();
   // console.log(selectVehicle);
+
+  // console.log(booking);
 
   const getData = async () => {
     try {
@@ -32,6 +34,23 @@ export default function bookingConfirm() {
   useEffect(() => {
     getData();
   }, []);
+
+  const handleCancel = async () => {
+    try {
+      const res = await cancelVehicle(booking?.renter_info?.id).unwrap();
+      // console.log("asdfasdf", res);
+      if (res?.status) {
+        alert(res?.message);
+        await AsyncStorage.removeItem("booked");
+        router.back();
+      } else {
+        alert(res?.message);
+        router.back();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={tw` flex-1 bg-base`}>
@@ -127,6 +146,25 @@ export default function bookingConfirm() {
           )}
         </View>
       </ScrollView>
+      <View style={tw`flex-row items-center px-4 pb-4 gap-2`}>
+        <TButton
+          onPress={() => {
+            router.push({
+              pathname: "/vehicles/update",
+              params: {
+                booking: JSON.stringify(booking),
+              },
+            });
+          }}
+          title="Update Booking"
+          containerStyle={tw`bg-blue-600 w-1/2`}
+        />
+        <TButton
+          onPress={handleCancel}
+          title="Cancel"
+          containerStyle={tw`w-1/2 bg-red-600`}
+        />
+      </View>
     </View>
   );
 }

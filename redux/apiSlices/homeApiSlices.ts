@@ -41,14 +41,22 @@ const homeSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["vehicle"],
     }),
+    updateBooking: builder.mutation<any, any>({
+      query: ({ data, id }) => ({
+        url: `/booking-update/${id}`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["vehicle"],
+    }),
 
-    // deleteAdditional: builder.mutation({
-    //     query: id => ({
-    //         url: `/additional/${id}`,
-    //         method: 'DELETE',
-    //     }),
-    //     invalidatesTags: ['additional'],
-    // }),
+    cancelBooked: builder.mutation({
+      query: (id) => ({
+        url: `/booking-cancle/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["vehicle"],
+    }),
   }),
 });
 
@@ -57,7 +65,8 @@ export const {
 
   useGetSearchVehicleQuery,
   useGetStatisticQuery,
-
+  useCancelBookedMutation,
   useLazyGetSearchVehicleQuery,
   useLazyGetStatisticQuery,
+  useUpdateBookingMutation,
 } = homeSlice;

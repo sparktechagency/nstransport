@@ -5,7 +5,7 @@ const searchSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     searchVehicle: builder.query<IVehicles, any>({
       query: ({ page, search, limit }) => ({
-        url: `search?search=${search}`,
+        url: `search?search=${search}&page=${page}&limit=${limit}`,
       }),
       providesTags: ["vehicle"],
     }),
