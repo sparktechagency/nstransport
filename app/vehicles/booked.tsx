@@ -167,10 +167,11 @@ export default function bookingConfirm() {
               [
                 {
                   text: "Cancel",
-                  style: "cancel",
+                  style: "default",
                 },
                 {
                   text: "Yes",
+                  style: "destructive",
                   onPress: async () => {
                     await handleCancel();
                   },
