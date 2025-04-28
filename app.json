@@ -14,7 +14,7 @@
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         },
-        "UIBackgroundModes": []  // Remove "remote-notification" if present
+        "UIBackgroundModes": []
       },
       "usesAppleSignIn": false,
       "usesIcloudStorage": false,
@@ -30,7 +30,6 @@
       },
       "package": "com.niko.nstransport",
       "permissions": []
-   
     },
     "web": {
       "bundler": "metro",
@@ -56,8 +55,11 @@
       "router": {
         "origin": false
       },
+         // "eas": {
+      //   "projectId": "7c0d51e4-40e6-4677-a15c-6329b8a6b223"
+      // }
       "eas": {
-        "projectId": "7c0d51e4-40e6-4677-a15c-6329b8a6b223"
+        "projectId": "f539856e-afbe-48bb-9ad6-adb559f4f7cd"
       }
     }
   }

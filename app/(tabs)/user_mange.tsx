@@ -137,7 +137,7 @@ const UserManage = () => {
   };
 
   return (
-    <View style={tw`flex-1 bg-white p-4`}>
+    <View style={tw`flex-1 bg-base p-4`}>
       <View style={tw`flex-row justify-between items-center mb-4`}>
         <Text style={tw`text-xl text-gray-800 font-bold`}>User Management</Text>
         <TouchableOpacity
