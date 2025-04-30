@@ -11,7 +11,6 @@ import SideModal from "@/lib/modals/SideModal";
 import tw from "@/lib/tailwind";
 import { useGetSearchVehicleQuery } from "@/redux/apiSlices/homeApiSlices";
 import { HIGHT } from "@/utils/utils";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { RefreshControl } from "react-native";
 import { SvgXml } from "react-native-svg";
@@ -96,13 +95,14 @@ const allvehicles = () => {
           return (
             <VehicleCard
               onPress={async () => {
-                if (item?.book) {
-                  AsyncStorage.setItem("booked", JSON.stringify(item));
-                  router.push("/vehicles/booked");
-                } else {
-                  AsyncStorage.setItem("vehicle", JSON.stringify(item));
-                  router.push("/vehicles/booking");
-                }
+                // if (item?.book) {
+                //   AsyncStorage.setItem("booked", JSON.stringify(item));
+                //   router.push("/vehicles/booked");
+                // } else {
+                //   AsyncStorage.setItem("vehicle", JSON.stringify(item));
+                //   router.push("/vehicles/booking");
+                // }
+                router?.push("/vehicles/vehicle_details");
               }}
               item={item}
             />
