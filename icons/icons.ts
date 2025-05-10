@@ -136,3 +136,5 @@ export const IconClose = `<svg width="24" height="24" viewBox="0 0 24 24" fill="
 </svg>
 
 `;
+export const IconClose2 = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30" x="0" y="0" viewBox="0 0 32 32" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><path fill="#f44336" d="M16 2c-18.5.6-18.5 27.4 0 28 18.5-.6 18.5-27.4 0-28z" opacity="1" data-original="#f44336" class=""></path><path fill="#eeeeee" d="m17.4 16 4.2-4.2c.9-.9-.5-2.3-1.4-1.4L16 14.6l-4.2-4.2c-.9-.9-2.3.5-1.4 1.4l4.2 4.2-4.2 4.2c-.9.9.5 2.3 1.4 1.4l4.2-4.2 4.2 4.2c.9.9 2.3-.5 1.4-1.4z" opacity="1" data-original="#eeeeee"></path></g></svg>
+`;

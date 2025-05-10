@@ -1,5 +1,6 @@
 import * as yup from "yup";
 
+import { IconCalendar, IconClose2, IconPlusWhite } from "@/icons/icons";
 import React, { useEffect, useState } from "react";
 import {
   ScrollView,
@@ -9,47 +10,25 @@ import {
   View,
 } from "react-native";
 
-import { IconCalendar } from "@/icons/icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
-import TButton from "@/lib/buttons/TButton";
 import DateModal from "@/lib/modals/DateModal";
-import { useToast } from "@/lib/modals/Toaster";
+import DatePicker from "react-native-date-picker";
+import { Formik } from "formik";
+import IButton from "@/lib/buttons/IButton";
+import { SvgXml } from "react-native-svg";
+import TButton from "@/lib/buttons/TButton";
+import dayjs from "dayjs";
 import tw from "@/lib/tailwind";
 import { useBookingMutation } from "@/redux/apiSlices/homeApiSlices";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import dayjs from "dayjs";
 import { useRouter } from "expo-router";
-import { Formik } from "formik";
-import moment from "moment";
-import DatePicker from "react-native-date-picker";
-import { Dropdown } from "react-native-element-dropdown";
-import { SvgXml } from "react-native-svg";
+import { useToast } from "@/lib/modals/Toaster";
 
 export default function booking() {
-  const [selectVehicle, setSelectVehicle] = useState<any>(null);
   const { closeToast, showToast } = useToast();
-
   const [bookingService] = useBookingMutation();
-
-  const [dateModal, setDateModal] = useState(false);
-  const [selectRangeDateModal, setSelectRangeDateModal] = useState(false);
-  const [startTimeModal, setStartTimeModal] = useState(false);
-  const [endTimeModal, setEndTimeModal] = useState(false);
-
-  const [date, setDate] = useState(new Date());
-
   const router = useRouter();
-
-  const bookingType = [
-    {
-      label: "Single Day Booking",
-      value: "single_day",
-    },
-    {
-      label: "Multiple Days Booking",
-      value: "multiple_day",
-    },
-  ];
+  const [selectVehicle, setSelectVehicle] = useState<any>(null);
 
   useEffect(() => {
     AsyncStorage.getItem("vehicle").then((item) => {
@@ -60,11 +39,8 @@ export default function booking() {
 
   const handleBookingCar = async (values: any) => {
     if (selectVehicle?.id) values.vehicle_id = selectVehicle.id;
-    console.log(values);
     try {
       const res = await bookingService(values).unwrap();
-      // console.log(res);
-      // await AsyncStorage.setItem("booked", JSON.stringify(values));
       router.back();
     } catch (error) {
       console.log(error);
@@ -75,31 +51,18 @@ export default function booking() {
     }
   };
 
-  // console.log(selectVehicle?.booked);
-
   const validationSchema = yup.object().shape({
     renter_name: yup.string().required("* required"),
     phone_number: yup.string().required("* required"),
     booking_type: yup.string().required("* required"),
     booked_dates: yup
       .array()
-      .min(1, "You must select at least one date.") // Enforces at least one date selected
+      .min(1, "You must select at least one date.")
       .required("* required"),
-    booking_time_from: yup.string().when("booking_type", {
-      is: (val: string) => val === "single_day",
-      then: (schema) => schema.required("* required"),
-      otherwise: (schema) => schema.notRequired(),
-    }),
-    booking_time_to: yup.string().when("booking_type", {
-      is: (val: string) => val === "single_day",
-      then: (schema) => schema.required("* required"),
-      otherwise: (schema) => schema.notRequired(),
-    }),
   });
 
   return (
     <View style={tw` flex-1 bg-base`}>
-      {/* header part  */}
       <BackWithComponent
         onPress={() => {
           router.back();
@@ -111,11 +74,16 @@ export default function booking() {
         initialValues={{
           renter_name: "",
           phone_number: "",
-          booking_type: "",
-          booked_dates: [],
+          booking_type: "single_day", // Default value
+          booked_dates: [
+            {
+              date: "",
+              booking_time_from: "",
+              booking_time_to: "",
+            },
+          ],
         }}
         validationSchema={validationSchema}
-        validateOnSubmit={true}
         onSubmit={async (values) => {
           handleBookingCar(values);
         }}
@@ -133,8 +101,6 @@ export default function booking() {
               keyboardShouldPersistTaps="always"
               contentContainerStyle={tw`px-4 py-4 gap-5`}
             >
-              {/* header parts  */}
-
               <View style={tw`gap-4 pb-5`}>
                 <View style={tw`gap-1 `}>
                   <View style={tw`flex-row items-center`}>
@@ -151,16 +117,16 @@ export default function booking() {
                       </Text>
                     )}
                   </View>
-
                   <TextInput
                     onChangeText={handleChange("renter_name")}
                     onBlur={handleBlur("renter_name")}
                     value={values.renter_name}
-                    placeholder="Enter ranter name"
+                    placeholder="Enter renter name"
                     placeholderTextColor={tw.color("gray-400")}
                     style={tw`bg-white h-12 rounded-md px-2`}
                   />
                 </View>
+
                 <View style={tw`gap-1 `}>
                   <View style={tw`flex-row items-center`}>
                     <Text
@@ -183,246 +149,217 @@ export default function booking() {
                     placeholder="Enter phone number"
                     placeholderTextColor={tw.color("gray-400")}
                     style={tw`bg-white h-12 rounded-md px-2`}
+                    keyboardType="phone-pad"
                   />
                 </View>
-                <View style={tw`gap-1 `}>
+
+                <View style={tw`gap-2`}>
                   <View style={tw`flex-row items-center`}>
                     <Text
                       style={tw`text-base text-black font-PoppinsSemiBold px-1`}
                     >
-                      Booking type
+                      Booking Date
                     </Text>
-                    {errors.booking_type && (
+                    {errors.booked_dates && (
                       <Text
                         style={tw`text-red-500 text-xs font-PoppinsRegular`}
                       >
-                        {errors.booking_type}
+                        {errors.booked_dates}
                       </Text>
                     )}
                   </View>
-
-                  <Dropdown
-                    style={tw`bg-white h-12 px-2 rounded-md`}
-                    placeholderStyle={tw`text-gray-500 text-sm`}
-                    itemContainerStyle={tw`bg-transparent`}
-                    data={bookingType}
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder="Select item"
-                    value={values.booking_type}
-                    onChange={(item) => {
-                      handleChange("booking_type")(item.value);
-                    }}
-                    renderItem={(item) => {
-                      return (
-                        <View
-                          style={tw`m-1 p-3 gap-1 flex-row items-center bg-transparent justify-between border border-gray-200 rounded-md`}
-                        >
-                          <Text
-                            style={tw`text-base text-black font-PoppinsMedium`}
-                          >
-                            {item?.label}
-                          </Text>
-                        </View>
-                      );
-                    }}
-                  />
-                </View>
-
-                {values.booking_type === "single_day" && (
-                  <>
-                    <View style={tw`gap-2`}>
-                      <View style={tw`flex-row items-center`}>
-                        <Text
-                          style={tw`text-base text-black font-PoppinsSemiBold px-1`}
-                        >
-                          Booking Date
-                        </Text>
-                        {errors.booked_dates && (
-                          <Text
-                            style={tw`text-red-500 text-xs font-PoppinsRegular`}
-                          >
-                            {errors.booked_dates}
-                          </Text>
-                        )}
-                      </View>
-
-                      <TouchableOpacity
-                        onPress={() => {
-                          setDateModal(true);
-                        }}
-                      >
-                        <View
-                          style={tw`bg-white h-12 p-2 rounded-md flex-row items-center justify-between`}
-                        >
-                          <Text
-                            style={tw`text-sm text-gray-500 font-PoppinsRegular`}
-                          >
-                            {values?.booked_dates?.length
-                              ? values?.booked_dates
-                              : "Select date"}
-                          </Text>
-                          <SvgXml xml={IconCalendar} />
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                    <View style={tw`gap-2`}>
-                      <View style={tw`flex-row items-center`}>
-                        <Text
-                          style={tw`text-base text-black font-PoppinsSemiBold px-1`}
-                        >
-                          Booking Time
-                        </Text>
-                        {(errors?.booking_time_from ||
-                          errors?.booking_time_to) && (
-                          <Text
-                            style={tw`text-red-500 text-xs font-PoppinsRegular`}
-                          >
-                            {errors.booking_time_from || errors.booking_time_to}
-                          </Text>
-                        )}
-                      </View>
-
-                      <TouchableOpacity onPress={() => setStartTimeModal(true)}>
-                        <View
-                          style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-between`}
-                        >
-                          <Text
-                            style={tw`text-sm text-gray-500 font-PoppinsRegular`}
-                          >
-                            {values?.booking_time_from
-                              ? moment(
-                                  values?.booking_time_from,
-                                  "H:mm"
-                                ).format("hh:mm A")
-                              : "Select start time"}
-                          </Text>
-                          <SvgXml xml={IconCalendar} />
-                        </View>
-                      </TouchableOpacity>
-                      <TouchableOpacity onPress={() => setEndTimeModal(true)}>
-                        <View
-                          style={tw`bg-white h-12 px-2 rounded-md flex-row items-center justify-between`}
-                        >
-                          <Text
-                            style={tw`text-sm text-gray-500 font-PoppinsRegular`}
-                          >
-                            {values?.booking_time_to
-                              ? moment(values?.booking_time_to, "H:mm").format(
-                                  "hh:mm A"
-                                )
-                              : "Select end time"}
-                          </Text>
-                          <SvgXml xml={IconCalendar} />
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  </>
-                )}
-                {values.booking_type === "multiple_day" && (
-                  <View style={tw`gap-2`}>
-                    <View style={tw`flex-row items-center`}>
-                      <Text
-                        style={tw`text-base text-black font-PoppinsSemiBold px-1`}
-                      >
-                        Booking Date
-                      </Text>
-                      {errors.booked_dates && (
-                        <Text
-                          style={tw`text-red-500 text-xs font-PoppinsRegular`}
-                        >
-                          {errors.booked_dates}
-                        </Text>
-                      )}
-                    </View>
-                    <TouchableOpacity
+                  <View style={tw` gap-2`}>
+                    {values?.booked_dates?.map((date, index: number) => (
+                      <RenderDateAndTimePicker
+                        key={index}
+                        index={index}
+                        selectVehicleDate={selectVehicle?.date}
+                        date={date}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        errors={errors}
+                      />
+                    ))}
+                    <IButton
+                      containerStyle={tw`h-10 my-3 w-[50%] self-center rounded-lg bg-primary`}
+                      svg={IconPlusWhite}
                       onPress={() => {
-                        setSelectRangeDateModal(true);
+                        setFieldValue("booked_dates", [
+                          ...values.booked_dates,
+                          {
+                            date: "",
+                            booking_time_from: "",
+                            booking_time_to: "",
+                          },
+                        ]);
                       }}
-                    >
-                      <View
-                        style={tw`bg-white min-h-12 p-2 rounded-md flex-row ${
-                          values?.booked_dates?.length
-                            ? "flex-wrap gap-2 "
-                            : "justify-between"
-                        } items-center `}
-                      >
-                        {values?.booked_dates?.length ? (
-                          values?.booked_dates?.map((booked_dates) => {
-                            return (
-                              <View key={booked_dates} style={tw`gap-3`}>
-                                <Text style={tw`p-1 bg-base rounded-md`}>
-                                  {booked_dates}
-                                </Text>
-                              </View>
-                            );
-                          })
-                        ) : (
-                          <Text
-                            style={tw`text-sm text-gray-500 font-PoppinsRegular `}
-                          >
-                            Select date range
-                          </Text>
-                        )}
-                        {!values?.booked_dates?.length && (
-                          <SvgXml xml={IconCalendar} />
-                        )}
-                      </View>
-                    </TouchableOpacity>
+                    />
                   </View>
-                )}
+                </View>
               </View>
             </ScrollView>
             <View style={tw`my-5 mx-4`}>
               <TButton onPress={handleSubmit} title="Book" />
             </View>
-
-            {/* time picker  */}
-            <DatePicker
-              modal
-              mode="time"
-              is24hourSource="device"
-              open={startTimeModal || endTimeModal}
-              date={date}
-              onConfirm={(date) => {
-                if (startTimeModal) {
-                  setFieldValue(
-                    "booking_time_from",
-                    dayjs(date).format("HH:mm")
-                  );
-                  setStartTimeModal(false);
-                }
-                if (endTimeModal) {
-                  setFieldValue("booking_time_to", dayjs(date).format("HH:mm"));
-                  setEndTimeModal(false);
-                }
-              }}
-              onCancel={() => {
-                setStartTimeModal(false);
-                setEndTimeModal(false);
-              }}
-            />
-
-            {/* date picker  */}
-            <DateModal
-              item={selectVehicle}
-              selectedDate={(date) => {
-                setFieldValue("booked_dates", date);
-              }}
-              range={values.booking_type === "multiple_day"}
-              visible={dateModal || selectRangeDateModal}
-              setVisible={
-                dateModal
-                  ? setDateModal
-                  : selectRangeDateModal
-                  ? setSelectRangeDateModal
-                  : () => {}
-              }
-            />
           </>
         )}
       </Formik>
     </View>
   );
 }
+
+const RenderDateAndTimePicker = ({
+  index,
+  selectVehicleDate,
+  date,
+  values,
+  setFieldValue,
+  errors,
+}: {
+  index: number;
+  selectVehicleDate: any;
+  values: any;
+  setFieldValue: any;
+  date: any;
+  errors: any;
+}) => {
+  const [dateModal, setDateModal] = useState(false);
+  const [startTimeModal, setStartTimeModal] = useState(false);
+  const [endTimeModal, setEndTimeModal] = useState(false);
+
+  const handleDateChange = (selectedDate: string) => {
+    const updatedDates = [...values.booked_dates];
+    updatedDates[index] = {
+      ...updatedDates[index],
+      date: selectedDate,
+    };
+    setFieldValue("booked_dates", updatedDates);
+  };
+
+  const handleTimeChange = (
+    time: Date,
+    field: "booking_time_from" | "booking_time_to"
+  ) => {
+    const updatedDates = [...values.booked_dates];
+    updatedDates[index] = {
+      ...updatedDates[index],
+      [field]: dayjs(time).format("h:mm A"), // Changed from "HH:mm" to "h:mm A"
+    };
+    setFieldValue("booked_dates", updatedDates);
+  };
+
+  return (
+    <>
+      <DatePicker
+        modal
+        mode="time"
+        // is24hourSource={""}
+        open={startTimeModal || endTimeModal}
+        date={new Date()}
+        onConfirm={(time) => {
+          if (startTimeModal) {
+            handleTimeChange(time, "booking_time_from");
+            setStartTimeModal(false);
+          }
+          if (endTimeModal) {
+            handleTimeChange(time, "booking_time_to");
+            setEndTimeModal(false);
+          }
+        }}
+        onCancel={() => {
+          setStartTimeModal(false);
+          setEndTimeModal(false);
+        }}
+      />
+
+      <DateModal
+        item={selectVehicleDate}
+        selectedDate={handleDateChange}
+        visible={dateModal}
+        setVisible={setDateModal}
+      />
+
+      <View style={tw`gap-2 bg-white p-2 rounded-md`}>
+        <View style={tw`flex-row items-center justify-between`}>
+          <Text style={tw`text-sm pl-2 font-PoppinsMedium text-gray-500`}>
+            Booking date: {index + 1}
+          </Text>
+          {index > 0 && (
+            <IButton
+              onPress={() => {
+                const updatedDates = values.booked_dates.filter(
+                  (_, i) => i !== index
+                );
+                setFieldValue("booked_dates", updatedDates);
+              }}
+              containerStyle={tw`p-0 bg-transparent`}
+              svg={IconClose2}
+            />
+          )}
+        </View>
+
+        <View style={tw`gap-2`}>
+          <TouchableOpacity onPress={() => setDateModal(true)}>
+            <View
+              style={tw`bg-gray-50 h-12 p-2 rounded-md flex-row items-center justify-between`}
+            >
+              <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
+                {values.booked_dates[index]?.date
+                  ? dayjs(values.booked_dates[index].date).format("YYYY-MM-DD")
+                  : "Select date"}
+              </Text>
+              <SvgXml xml={IconCalendar} />
+            </View>
+          </TouchableOpacity>
+          {errors.booked_dates?.[index]?.date && (
+            <Text style={tw`text-red-500 text-xs font-PoppinsRegular`}>
+              {errors.booked_dates[index].date}
+            </Text>
+          )}
+        </View>
+
+        <View style={tw`gap-2 flex-row`}>
+          <View style={tw`flex-1`}>
+            <TouchableOpacity onPress={() => setStartTimeModal(true)}>
+              <View
+                style={tw`bg-gray-50 h-12 px-2 rounded-md flex-row items-center justify-between`}
+              >
+                <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
+                  {values.booked_dates[index]?.booking_time_from
+                    ? values.booked_dates[index].booking_time_from
+                    : "Select start time"}
+                </Text>
+                <SvgXml xml={IconCalendar} />
+              </View>
+            </TouchableOpacity>
+            {errors.booked_dates?.[index]?.booking_time_from && (
+              <Text style={tw`text-red-500 text-xs font-PoppinsRegular`}>
+                {errors.booked_dates[index].booking_time_from}
+              </Text>
+            )}
+          </View>
+
+          <View style={tw`flex-1`}>
+            <TouchableOpacity onPress={() => setEndTimeModal(true)}>
+              <View
+                style={tw`bg-gray-50 h-12 px-2 rounded-md flex-row items-center justify-between`}
+              >
+                <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
+                  {values.booked_dates[index]?.booking_time_to
+                    ? values.booked_dates[index].booking_time_to
+                    : "Select end time"}
+                </Text>
+                <SvgXml xml={IconCalendar} />
+              </View>
+            </TouchableOpacity>
+            {errors.booked_dates?.[index]?.booking_time_to && (
+              <Text style={tw`text-red-500 text-xs font-PoppinsRegular`}>
+                {errors.booked_dates[index].booking_time_to}
+              </Text>
+            )}
+          </View>
+        </View>
+      </View>
+    </>
+  );
+};

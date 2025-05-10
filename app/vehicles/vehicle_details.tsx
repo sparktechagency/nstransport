@@ -1,3 +1,4 @@
+import { Alert, FlatList, Text, View } from "react-native";
 import {
   IconCalendarForOrder,
   IconCall,
@@ -6,21 +7,29 @@ import {
   IconPen,
   IconUser,
 } from "@/icons/icons";
-import { Alert, FlatList, Text, View } from "react-native";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
-import IButton from "@/lib/buttons/IButton";
-import TButton from "@/lib/buttons/TButton";
 import EmptyCard from "@/lib/Empty/EmptyCard";
-import tw from "@/lib/tailwind";
-import { useCancelBookedMutation } from "@/redux/apiSlices/homeApiSlices";
 import { HIGHT } from "@/utils/utils";
-import { router } from "expo-router";
+import IButton from "@/lib/buttons/IButton";
 import React from "react";
 import { SvgXml } from "react-native-svg";
+import TButton from "@/lib/buttons/TButton";
+import { router } from "expo-router";
+import tw from "@/lib/tailwind";
+import { useCancelBookedMutation } from "@/redux/apiSlices/homeApiSlices";
 
 const vehicle_details = () => {
   const [cancelVehicle, results] = useCancelBookedMutation();
+  const [selectVehicle, setSelectVehicle] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    AsyncStorage.getItem("vehicle").then((item) => {
+      const data = JSON.parse(item);
+      setSelectVehicle(data);
+    });
+  }, []);
   const handleCancel = async () => {
     // try {
     //   const res = await cancelVehicle(booking?.renter_info?.id).unwrap();
@@ -56,7 +65,7 @@ const vehicle_details = () => {
             />
           </View>
         }
-        title={`LoadRunner - EF23LMN`}
+        title={`${selectVehicle?.title} - ${selectVehicle?.code}`}
       />
       <FlatList
         ListEmptyComponent={
