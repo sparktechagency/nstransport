@@ -10,19 +10,19 @@ import {
   View,
 } from "react-native";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
-import DateModal from "@/lib/modals/DateModal";
-import DatePicker from "react-native-date-picker";
-import { Formik } from "formik";
 import IButton from "@/lib/buttons/IButton";
-import { SvgXml } from "react-native-svg";
 import TButton from "@/lib/buttons/TButton";
-import dayjs from "dayjs";
+import DateModal from "@/lib/modals/DateModal";
+import { useToast } from "@/lib/modals/Toaster";
 import tw from "@/lib/tailwind";
 import { useBookingMutation } from "@/redux/apiSlices/homeApiSlices";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import dayjs from "dayjs";
 import { useRouter } from "expo-router";
-import { useToast } from "@/lib/modals/Toaster";
+import { Formik } from "formik";
+import DatePicker from "react-native-date-picker";
+import { SvgXml } from "react-native-svg";
 
 export default function booking() {
   const { closeToast, showToast } = useToast();
