@@ -11,6 +11,7 @@ interface IVehiclesCardProps {
   containerStyle?: any;
   onPress?: () => void;
   disable?: boolean;
+  offColor?: boolean;
 }
 
 const VehicleCard = ({
@@ -19,6 +20,7 @@ const VehicleCard = ({
   variant,
   containerStyle,
   disable,
+  offColor,
 }: IVehiclesCardProps) => {
   return (
     <TouchableOpacity
@@ -26,7 +28,7 @@ const VehicleCard = ({
       onPress={() => onPress && onPress()}
       style={[
         tw`bg-white relative border-t-4 border-[${
-          item?.book ? "#FF0000" : "#00A405"
+          !offColor ? (item?.book ? "#FF0000" : "#00A405") : "gray"
         }] rounded-lg py-2 px-4 flex-row justify-between`,
         containerStyle,
       ]}

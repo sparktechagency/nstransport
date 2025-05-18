@@ -8,6 +8,8 @@ interface IButton {
   containerStyle?: {};
   icon?: React.ReactNode;
   svg?: string;
+  svgHight?: any;
+  svgWidth?: any;
   onPress?: () => void;
   isLoading?: boolean;
   loadingColor?: string;
@@ -22,6 +24,8 @@ const IButton = ({
   disabled,
   isLoading,
   loadingColor,
+  svgHight,
+  svgWidth,
 }: IButton) => {
   return (
     <TouchableOpacity

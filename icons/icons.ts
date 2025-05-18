@@ -126,7 +126,7 @@ export const IconClockForOrder = `<svg width="20" height="20" viewBox="0 0 20 20
 </svg>
 
 `;
-export const IconPen = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+export const IconPen = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M23.6101 5.38925C24.13 4.86932 24.13 4.00278 23.6101 3.50951L20.4905 0.389946C19.9972 -0.129982 19.1307 -0.129982 18.6107 0.389946L16.1578 2.82961L21.1571 7.82891M0 19.0007V24H4.99931L19.7439 9.24205L14.7446 4.24274L0 19.0007Z" fill="#00A405"/>
 </svg>
 

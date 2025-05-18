@@ -88,3 +88,27 @@ export interface IUsers extends IFetch {
     data: IUser[];
   } & IPaginate;
 }
+
+export interface Customer {
+  id: number;
+  name: string;
+  phone: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Order {
+  id: 38;
+  vehicle_id: 1;
+  customer_id: 4;
+  booking_date: string;
+  from: string;
+  to: string;
+  created_at: string;
+  updated_at: string;
+  customer: Customer;
+}
+
+export interface BookedList extends IFetch {
+  data: Array<Order>;
+}

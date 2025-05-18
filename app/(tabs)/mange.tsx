@@ -164,12 +164,14 @@ const mange = () => {
         contentContainerStyle={tw`pt-4 pb-8  gap-3 px-4`}
         data={allvehicles?.data?.data}
         renderItem={({ item, index }) => {
+          // delete item.booked;
           return (
             <View style={tw`flex-row gap-2 items-center`}>
               <VehicleCard
                 disable
                 containerStyle={tw`flex-1`}
                 variant="mange"
+                offColor
                 item={item}
               />
               <View style={tw`gap-2 `}>

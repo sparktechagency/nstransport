@@ -1,20 +1,20 @@
-import { FlatList, TextInput, View } from "react-native";
 import { IconSearchGray, IconThreeLine } from "@/icons/icons";
 import React, { useState } from "react";
+import { FlatList, TextInput, View } from "react-native";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
-import EmptyCard from "@/lib/Empty/EmptyCard";
-import { HIGHT } from "@/utils/utils";
-import IwtButton from "@/lib/buttons/IwtButton";
-import { RefreshControl } from "react-native";
-import SideModal from "@/lib/modals/SideModal";
-import { SvgXml } from "react-native-svg";
-import TButton from "@/lib/buttons/TButton";
 import VehicleCard from "@/components/common/VehicleCard";
+import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
+import IwtButton from "@/lib/buttons/IwtButton";
+import TButton from "@/lib/buttons/TButton";
+import EmptyCard from "@/lib/Empty/EmptyCard";
+import SideModal from "@/lib/modals/SideModal";
 import tw from "@/lib/tailwind";
 import { useGetSearchVehicleQuery } from "@/redux/apiSlices/homeApiSlices";
+import { HIGHT } from "@/utils/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { RefreshControl } from "react-native";
+import { SvgXml } from "react-native-svg";
 
 const allvehicles = () => {
   const router = useRouter();
@@ -104,7 +104,7 @@ const allvehicles = () => {
                 //   router.push("/vehicles/booking");
                 // }
                 await AsyncStorage.setItem("vehicle", JSON.stringify(item));
-                router?.push("/vehicles/vehicle_details");
+                router?.push("/vehicles/booked_list");
               }}
               item={item}
             />

@@ -1,8 +1,9 @@
 import * as yup from "yup";
 
-import { IconCalendar, IconClose2, IconPlusWhite } from "@/icons/icons";
+import { IconCalendar, IconPlusWhite } from "@/icons/icons";
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -40,8 +41,13 @@ export default function booking() {
   const handleBookingCar = async (values: any) => {
     if (selectVehicle?.id) values.vehicle_id = selectVehicle.id;
     try {
+      console.log(values);
       const res = await bookingService(values).unwrap();
-      router.back();
+      console.log(res);
+      if (res?.status) {
+        Alert.alert("Success", res?.message || "Booking make successfully");
+        router.back();
+      }
     } catch (error) {
       console.log(error);
       showToast({
@@ -54,11 +60,14 @@ export default function booking() {
   const validationSchema = yup.object().shape({
     renter_name: yup.string().required("* required"),
     phone_number: yup.string().required("* required"),
-    booking_type: yup.string().required("* required"),
     booked_dates: yup
       .array()
-      .min(1, "You must select at least one date.")
-      .required("* required"),
+      .min(1, "* At least one booking date is required")
+      .test("complete-dates", "* Please complete all fields ", (dates) => {
+        const okay = dates?.some((i) => i?.date && i.from && i.to);
+        console.log(okay, dates);
+        return okay;
+      }),
   });
 
   return (
@@ -74,12 +83,11 @@ export default function booking() {
         initialValues={{
           renter_name: "",
           phone_number: "",
-          booking_type: "single_day", // Default value
           booked_dates: [
             {
               date: "",
-              booking_time_from: "",
-              booking_time_to: "",
+              from: "",
+              to: "",
             },
           ],
         }}
@@ -188,8 +196,8 @@ export default function booking() {
                           ...values.booked_dates,
                           {
                             date: "",
-                            booking_time_from: "",
-                            booking_time_to: "",
+                            from: "",
+                            to: "",
                           },
                         ]);
                       }}
@@ -231,15 +239,12 @@ const RenderDateAndTimePicker = ({
     const updatedDates = [...values.booked_dates];
     updatedDates[index] = {
       ...updatedDates[index],
-      date: selectedDate,
+      date: selectedDate![0],
     };
     setFieldValue("booked_dates", updatedDates);
   };
 
-  const handleTimeChange = (
-    time: Date,
-    field: "booking_time_from" | "booking_time_to"
-  ) => {
+  const handleTimeChange = (time: Date, field: "from" | "to") => {
     const updatedDates = [...values.booked_dates];
     updatedDates[index] = {
       ...updatedDates[index],
@@ -258,11 +263,11 @@ const RenderDateAndTimePicker = ({
         date={new Date()}
         onConfirm={(time) => {
           if (startTimeModal) {
-            handleTimeChange(time, "booking_time_from");
+            handleTimeChange(time, "from");
             setStartTimeModal(false);
           }
           if (endTimeModal) {
-            handleTimeChange(time, "booking_time_to");
+            handleTimeChange(time, "to");
             setEndTimeModal(false);
           }
         }}
@@ -272,43 +277,41 @@ const RenderDateAndTimePicker = ({
         }}
       />
 
-      <DateModal
-        item={selectVehicleDate}
-        selectedDate={handleDateChange}
-        visible={dateModal}
-        setVisible={setDateModal}
-      />
-
       <View style={tw`gap-2 bg-white p-2 rounded-md`}>
-        <View style={tw`flex-row items-center justify-between`}>
-          <Text style={tw`text-sm pl-2 font-PoppinsMedium text-gray-500`}>
-            Booking date: {index + 1}
+        <View
+          style={tw`border px-1 border-gray-50 flex-row items-center justify-between`}
+        >
+          <Text style={tw`text-sm  font-PoppinsMedium text-gray-500`}>
+            Booking date :
           </Text>
-          {index > 0 && (
-            <IButton
-              onPress={() => {
-                const updatedDates = values.booked_dates.filter(
-                  (_, i) => i !== index
-                );
-                setFieldValue("booked_dates", updatedDates);
-              }}
-              containerStyle={tw`p-0 bg-transparent`}
-              svg={IconClose2}
-            />
+          {!values.booked_dates[index]?.date && (
+            <Text style={tw`text-sm text-gray-600`}>select a date</Text>
           )}
+          {values.booked_dates[index]?.date &&
+            !values.booked_dates[index]?.from && (
+              <Text style={tw`text-sm text-gray-600`}>select start time</Text>
+            )}
+          {values.booked_dates[index]?.date &&
+            values.booked_dates[index]?.from &&
+            !values.booked_dates[index]?.to && (
+              <Text style={tw`text-sm text-gray-600`}>select end time</Text>
+            )}
+          {values.booked_dates[index]?.date &&
+            values.booked_dates[index]?.from &&
+            values.booked_dates[index]?.to && (
+              <Text style={tw`text-sm text-green-600`}>available</Text>
+            )}
         </View>
 
         <View style={tw`gap-2`}>
           <TouchableOpacity onPress={() => setDateModal(true)}>
-            <View
-              style={tw`bg-gray-50 h-12 p-2 rounded-md flex-row items-center justify-between`}
-            >
-              <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
-                {values.booked_dates[index]?.date
-                  ? dayjs(values.booked_dates[index].date).format("YYYY-MM-DD")
-                  : "Select date"}
-              </Text>
-              <SvgXml xml={IconCalendar} />
+            <View style={tw` p-2 rounded-md `}>
+              <DateModal
+                item={selectVehicleDate}
+                selectedDate={handleDateChange}
+                visible={dateModal}
+                setVisible={setDateModal}
+              />
             </View>
           </TouchableOpacity>
           {errors.booked_dates?.[index]?.date && (
@@ -325,16 +328,16 @@ const RenderDateAndTimePicker = ({
                 style={tw`bg-gray-50 h-12 px-2 rounded-md flex-row items-center justify-between`}
               >
                 <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
-                  {values.booked_dates[index]?.booking_time_from
-                    ? values.booked_dates[index].booking_time_from
+                  {values.booked_dates[index]?.from
+                    ? values.booked_dates[index].from
                     : "Select start time"}
                 </Text>
                 <SvgXml xml={IconCalendar} />
               </View>
             </TouchableOpacity>
-            {errors.booked_dates?.[index]?.booking_time_from && (
+            {errors.booked_dates?.[index]?.from && (
               <Text style={tw`text-red-500 text-xs font-PoppinsRegular`}>
-                {errors.booked_dates[index].booking_time_from}
+                {errors.booked_dates[index].from}
               </Text>
             )}
           </View>
@@ -345,16 +348,16 @@ const RenderDateAndTimePicker = ({
                 style={tw`bg-gray-50 h-12 px-2 rounded-md flex-row items-center justify-between`}
               >
                 <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
-                  {values.booked_dates[index]?.booking_time_to
-                    ? values.booked_dates[index].booking_time_to
+                  {values.booked_dates[index]?.to
+                    ? values.booked_dates[index].to
                     : "Select end time"}
                 </Text>
                 <SvgXml xml={IconCalendar} />
               </View>
             </TouchableOpacity>
-            {errors.booked_dates?.[index]?.booking_time_to && (
+            {errors.booked_dates?.[index]?.to && (
               <Text style={tw`text-red-500 text-xs font-PoppinsRegular`}>
-                {errors.booked_dates[index].booking_time_to}
+                {errors.booked_dates[index].to}
               </Text>
             )}
           </View>

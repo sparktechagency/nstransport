@@ -2,9 +2,7 @@ import React, { useState } from "react";
 
 import dayjs from "dayjs";
 import { Calendar } from "react-native-calendars";
-import TButton from "../buttons/TButton";
 import tw from "../tailwind";
-import NormalModal from "./NormalModal";
 
 interface DateModalProps {
   visible: boolean;
@@ -120,32 +118,32 @@ const DateModal = ({
   };
 
   return (
-    <NormalModal
-      animationType="fade"
-      visible={visible}
-      setVisible={setVisible}
-      layerContainerStyle={tw`justify-center items-center flex-1 px-[4%] `}
-      containerStyle={tw`rounded-2xl bg-white`}
-    >
-      <Calendar
-        theme={theme}
-        markingType="custom"
-        markedDates={getMarkedDates()}
-        onDayPress={handleDateSelect}
-        minDate={formatDate(new Date())} // This prevents selection of past dates
-      />
-      {range && (
-        <TButton
-          disabled={selectedDates.length === 0}
-          title="Done"
-          containerStyle={tw`mt-4`}
-          onPress={() => {
-            selectedDate(selectedDates);
-            setVisible(false);
-          }}
-        />
-      )}
-    </NormalModal>
+    // <NormalModal
+    //   animationType="fade"
+    //   visible={visible}
+    //   setVisible={setVisible}
+    //   layerContainerStyle={tw`justify-center items-center flex-1 px-[4%] `}
+    //   containerStyle={tw`rounded-2xl bg-white`}
+    // >
+    <Calendar
+      theme={theme}
+      markingType="custom"
+      markedDates={getMarkedDates()}
+      onDayPress={handleDateSelect}
+      minDate={formatDate(new Date())} // This prevents selection of past dates
+    />
+    // {range && (
+    //   <TButton
+    //     disabled={selectedDates.length === 0}
+    //     title="Done"
+    //     containerStyle={tw`mt-4`}
+    //     onPress={() => {
+    //       selectedDate(selectedDates);
+    //       setVisible(false);
+    //     }}
+    //   />
+    // )}
+    // </NormalModal>
   );
 };
 
