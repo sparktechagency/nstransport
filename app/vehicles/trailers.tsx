@@ -76,9 +76,9 @@ const trailers = () => {
         renderItem={({ item, index }) => {
           return (
             <VehicleCard
-              onPress={() => {
-                AsyncStorage.setItem("vehicle", JSON.stringify(item));
-                router.push("/vehicles/booking");
+              onPress={async () => {
+                await AsyncStorage.setItem("vehicle", JSON.stringify(item));
+                router?.push("/vehicles/booked_list");
               }}
               item={item}
             />

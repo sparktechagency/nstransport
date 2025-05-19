@@ -55,13 +55,8 @@ const bookedvehicles = () => {
           return (
             <VehicleCard
               onPress={async () => {
-                if (item?.book) {
-                  AsyncStorage.setItem("booked", JSON.stringify(item));
-                  router.push("/vehicles/booked");
-                } else {
-                  AsyncStorage.setItem("vehicle", JSON.stringify(item));
-                  router.push("/vehicles/booking");
-                }
+                await AsyncStorage.setItem("vehicle", JSON.stringify(item));
+                router?.push("/vehicles/booked_list");
               }}
               item={item}
             />
