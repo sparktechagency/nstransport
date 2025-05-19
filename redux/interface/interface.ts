@@ -41,7 +41,7 @@ export interface IVehicle {
     updated_at: string;
   };
   image: string;
-  book?: boolean;
+  is_booked?: boolean;
   booked?: string[];
   renter_info?: {
     id: string;
@@ -111,4 +111,11 @@ export interface Order {
 
 export interface BookedList extends IFetch {
   data: Array<Order>;
+}
+
+export interface ICheck extends IFetch {
+  data: {
+    is_available: boolean;
+    availability_message: string;
+  };
 }

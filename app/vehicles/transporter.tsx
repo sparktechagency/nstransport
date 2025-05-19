@@ -24,7 +24,6 @@ const transporter = () => {
     refetch: TransporterRefetch,
   } = useGetSearchVehicleQuery({
     category: "Car Transporter",
-    type: "available",
     search: search,
   });
 

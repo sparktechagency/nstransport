@@ -73,6 +73,14 @@ export default function RootLayout() {
                 <Stack.Screen name="vehicles/trailers" />
                 <Stack.Screen name="vehicles/transporter" />
                 <Stack.Screen name="vehicles/bookedvehicles" />
+                <Stack.Screen name="vehicles/customer_update" />
+                <Stack.Screen
+                  name="order_view_modal"
+                  options={{
+                    presentation: "formSheet",
+                    sheetAllowedDetents: "fitToContents",
+                  }}
+                />
                 <Stack.Screen name="test" />
                 <Stack.Screen name="+not-found" />
               </Stack>

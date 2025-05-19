@@ -28,7 +28,7 @@ const VehicleCard = ({
       onPress={() => onPress && onPress()}
       style={[
         tw`bg-white relative border-t-4 border-[${
-          !offColor ? (item?.book ? "#FF0000" : "#00A405") : "gray"
+          !offColor ? (item?.is_booked ? "#FF0000" : "#00A405") : "gray"
         }] rounded-lg py-2 px-4 flex-row justify-between`,
         containerStyle,
       ]}
@@ -55,9 +55,9 @@ const VehicleCard = ({
       ) : (
         <View style={tw`gap-3`}>
           <TButton
-            title={item?.book ? "Booked" : "Available"}
+            title={item?.is_booked ? "Booked" : "Available"}
             containerStyle={tw`bg-[${
-              item?.book ? "#FF0000" : "#00A405"
+              item?.is_booked ? "#FF0000" : "#00A405"
             }] h-8 px-3`}
             titleStyle={tw`font-PoppinsRegular`}
           />

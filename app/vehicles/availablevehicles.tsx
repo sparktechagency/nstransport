@@ -26,7 +26,6 @@ export default function availablevehicles() {
     refetch: SprinterRefetch,
   } = useGetSearchVehicleQuery({
     category: "Sprinter",
-    type: "available",
   });
   const {
     data: Transporter,
@@ -35,7 +34,6 @@ export default function availablevehicles() {
     refetch: TransporterRefetch,
   } = useGetSearchVehicleQuery({
     category: "Car Transporter",
-    type: "available",
   });
   const {
     data: Trailer,
@@ -44,7 +42,6 @@ export default function availablevehicles() {
     refetch: TrailerRefetch,
   } = useGetSearchVehicleQuery({
     category: "Trailer",
-    type: "available",
   });
 
   // console.log(Sprinter);

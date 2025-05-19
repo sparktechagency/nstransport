@@ -1,7 +1,18 @@
 import * as yup from "yup";
 
+import {
+  useBookingSingleUpdateMutation,
+  useGetCheckAvailabilityQuery,
+} from "@/redux/apiSlices/homeApiSlices";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { IconCalendar } from "@/icons/icons";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
@@ -9,7 +20,7 @@ import TButton from "@/lib/buttons/TButton";
 import DateModal from "@/lib/modals/DateModal";
 import { useToast } from "@/lib/modals/Toaster";
 import tw from "@/lib/tailwind";
-import { useBookingMutation } from "@/redux/apiSlices/homeApiSlices";
+import { PrimaryColor } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
@@ -19,15 +30,18 @@ import { SvgXml } from "react-native-svg";
 
 export default function booking() {
   const { closeToast, showToast } = useToast();
-  const [bookingService] = useBookingMutation();
+  const [bookingUpdate] = useBookingSingleUpdateMutation();
   const router = useRouter();
   const [selectVehicle, setSelectVehicle] = useState<any>(null);
   const [dates, setDates] = useState<any>(null);
+  const [mesError, setMesError] = useState(null);
   const [initialValues, setInitialValues] = useState<any>({
     date: "",
     from: "",
     to: "",
   });
+
+  // console.log(dates);
 
   useEffect(() => {
     AsyncStorage.getItem("order").then((item) => {
@@ -71,11 +85,20 @@ export default function booking() {
     });
   }, []);
 
-  const handleBookingCar = async (values: any) => {
-    if (selectVehicle?.id) values.vehicle_id = selectVehicle.id;
+  const handleBookingUpdate = async (values: any) => {
     try {
-      const res = await bookingService(values).unwrap();
+      // console.log(values);
+      values._method = "PUT";
+      values.from = dayjs(values?.from).format("hh:mm A");
+      values.to = dayjs(values?.to).format("hh:mm A");
+      console.log(values);
+      const res = await bookingUpdate({
+        id: dates.id,
+        data: values,
+      }).unwrap();
+      // console.log(res);
       router.back();
+      Alert.alert("Updated", res.message);
     } catch (error) {
       console.log(error);
       showToast({
@@ -86,7 +109,7 @@ export default function booking() {
   };
 
   const validationSchema = yup.object().shape({
-    date: yup.date().required("* required"),
+    date: yup.string().required("* required"),
     from: yup.string().required("* required"),
     to: yup.string().required("* required"),
   });
@@ -104,7 +127,7 @@ export default function booking() {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={async (values) => {
-          handleBookingCar(values);
+          handleBookingUpdate(values);
         }}
         enableReinitialize={true}
       >
@@ -139,18 +162,22 @@ export default function booking() {
                   </View>
                   <View style={tw` gap-2`}>
                     <RenderDateAndTimePicker
-                      selectVehicleDate={values?.date}
-                      date={dates}
+                      selectVehicle={selectVehicle}
                       values={values}
                       setFieldValue={setFieldValue}
                       errors={errors}
+                      setMesError={setMesError}
                     />
                   </View>
                 </View>
               </View>
             </ScrollView>
             <View style={tw`my-5 mx-4`}>
-              <TButton onPress={handleSubmit} title="Book" />
+              <TButton
+                disabled={!!mesError}
+                onPress={handleSubmit}
+                title="Book"
+              />
             </View>
           </>
         )}
@@ -160,16 +187,16 @@ export default function booking() {
 }
 
 const RenderDateAndTimePicker = ({
-  selectVehicleDate,
-  date,
+  selectVehicle,
+  setMesError,
   values,
   setFieldValue,
   errors,
 }: {
-  selectVehicleDate: any;
+  selectVehicle: any;
   values: any;
   setFieldValue: any;
-  date: any;
+  setMesError: any;
   errors: any;
 }) => {
   const [dateModal, setDateModal] = useState(false);
@@ -177,14 +204,37 @@ const RenderDateAndTimePicker = ({
   const [endTimeModal, setEndTimeModal] = useState(false);
 
   const handleDateChange = (selectedDate: string[]) => {
-    setFieldValue("date", dayjs(selectedDate[0]).toDate());
+    setFieldValue("date", dayjs(selectedDate[0]).format("YYYY-MM-DD"));
   };
+  // console.log(values);
+  const { data: checkAvailability, isFetching } = useGetCheckAvailabilityQuery(
+    {
+      vehicle_id: selectVehicle?.id,
+      date: dayjs(values?.date).format("YYYY-MM-DD"),
+      from: dayjs(values?.from).format("hh:mm A"),
+      to: dayjs(values?.to).format("hh:mm A"),
+    },
+    {
+      skip: !values?.date || !values?.from || !values?.to || !selectVehicle?.id,
+    }
+  );
+
+  React.useEffect(() => {
+    if (!checkAvailability?.data?.is_available) {
+      setMesError(checkAvailability?.data?.availability_message as any);
+    } else {
+      setMesError(null);
+    }
+  }, [checkAvailability, isFetching]);
+
+  // console.log(values);
 
   return (
     <>
       <DatePicker
         modal
         mode="time"
+        minuteInterval={2}
         open={startTimeModal || endTimeModal}
         date={
           startTimeModal
@@ -209,32 +259,17 @@ const RenderDateAndTimePicker = ({
         }}
       />
 
-      <DateModal
-        // item={{ booked: [date?.booking_date] }}
-        selectedDate={handleDateChange}
-        visible={dateModal}
-        setVisible={setDateModal}
-      />
-
       <View style={tw`gap-2 bg-white p-2 rounded-md`}>
         <View style={tw`gap-2`}>
-          <TouchableOpacity onPress={() => setDateModal(true)}>
-            <View
-              style={tw`bg-gray-50 h-12 p-2 rounded-md flex-row items-center justify-between`}
-            >
-              <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
-                {values.date
-                  ? dayjs(values.date).format("YYYY-MM-DD")
-                  : "Select date"}
-              </Text>
-              <SvgXml xml={IconCalendar} />
-            </View>
-          </TouchableOpacity>
-          {errors.date && (
-            <Text style={tw`text-red-500 text-xs font-PoppinsRegular`}>
-              {errors.date}
-            </Text>
-          )}
+          <DateModal
+            // item={{ booked: [date?.booking_date] }}
+            initialValue={[
+              dayjs(values?.date, "YYYY,MM,DD").format("YYYY-MM-DD"),
+            ]}
+            selectedDate={handleDateChange}
+            visible={dateModal}
+            setVisible={setDateModal}
+          />
         </View>
 
         <View style={tw`gap-2 flex-row`}>
@@ -279,6 +314,19 @@ const RenderDateAndTimePicker = ({
           </View>
         </View>
       </View>
+      <>
+        {isFetching ? (
+          <ActivityIndicator color={PrimaryColor} size="small" />
+        ) : checkAvailability?.data?.is_available ? (
+          <Text style={tw`text-xs text-green-600`}>
+            {checkAvailability?.data?.availability_message}
+          </Text>
+        ) : (
+          <Text style={tw`text-xs text-red-600 opacity-20`}>
+            {checkAvailability?.data?.availability_message}
+          </Text>
+        )}
+      </>
     </>
   );
 };

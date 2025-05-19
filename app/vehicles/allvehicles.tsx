@@ -20,7 +20,7 @@ const allvehicles = () => {
   const router = useRouter();
 
   const [showModal, setShowModal] = useState(false);
-  const [filter, setFIlter] = useState("");
+  const [filter, setFIlter] = useState<"booked" | "available" | "">("");
   const [search, setSearch] = useState("");
 
   const {
@@ -31,7 +31,6 @@ const allvehicles = () => {
   } = useGetSearchVehicleQuery({
     search: search,
     filter: filter,
-    type: "total",
   });
   // console.log(allvehicles);
   return (
@@ -49,9 +48,15 @@ const allvehicles = () => {
               onPress={() => {
                 setShowModal(!showModal);
               }}
-              title="All"
+              title={
+                filter === "available"
+                  ? "Available"
+                  : filter === "booked"
+                  ? "Booked"
+                  : "All"
+              }
               svg={IconThreeLine}
-              titleStyle={tw`text-black font-PoppinsRegular`}
+              titleStyle={tw`text-black  font-PoppinsRegular`}
               containerStyle={tw`bg-transparent border border-gray-500 h-9 px-3 `}
             />
           </View>

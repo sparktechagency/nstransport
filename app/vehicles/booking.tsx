@@ -1,8 +1,13 @@
 import * as yup from "yup";
 
 import { IconCalendar, IconPlusWhite } from "@/icons/icons";
+import {
+  useBookingMutation,
+  useGetCheckAvailabilityQuery,
+} from "@/redux/apiSlices/homeApiSlices";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   ScrollView,
   Text,
@@ -17,7 +22,7 @@ import TButton from "@/lib/buttons/TButton";
 import DateModal from "@/lib/modals/DateModal";
 import { useToast } from "@/lib/modals/Toaster";
 import tw from "@/lib/tailwind";
-import { useBookingMutation } from "@/redux/apiSlices/homeApiSlices";
+import { PrimaryColor } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
@@ -30,7 +35,7 @@ export default function booking() {
   const [bookingService] = useBookingMutation();
   const router = useRouter();
   const [selectVehicle, setSelectVehicle] = useState<any>(null);
-
+  const [mesError, setMesError] = useState(null);
   useEffect(() => {
     AsyncStorage.getItem("vehicle").then((item) => {
       const data = JSON.parse(item);
@@ -65,7 +70,6 @@ export default function booking() {
       .min(1, "* At least one booking date is required")
       .test("complete-dates", "* Please complete all fields ", (dates) => {
         const okay = dates?.some((i) => i?.date && i.from && i.to);
-        console.log(okay, dates);
         return okay;
       }),
   });
@@ -103,6 +107,9 @@ export default function booking() {
           values,
           setFieldValue,
           errors,
+          setErrors,
+          isValid,
+          dirty,
         }) => (
           <>
             <ScrollView
@@ -181,8 +188,9 @@ export default function booking() {
                       <RenderDateAndTimePicker
                         key={index}
                         index={index}
-                        selectVehicleDate={selectVehicle?.date}
+                        selectVehicleDate={selectVehicle}
                         date={date}
+                        setMesError={setMesError}
                         values={values}
                         setFieldValue={setFieldValue}
                         errors={errors}
@@ -207,7 +215,16 @@ export default function booking() {
               </View>
             </ScrollView>
             <View style={tw`my-5 mx-4`}>
-              <TButton onPress={handleSubmit} title="Book" />
+              <TButton
+                onPress={handleSubmit}
+                title="Book"
+                disabled={
+                  !isValid ||
+                  !dirty ||
+                  !!mesError ||
+                  Object.keys(errors).length > 0
+                }
+              />
             </View>
           </>
         )}
@@ -223,6 +240,7 @@ const RenderDateAndTimePicker = ({
   values,
   setFieldValue,
   errors,
+  setMesError,
 }: {
   index: number;
   selectVehicleDate: any;
@@ -230,6 +248,7 @@ const RenderDateAndTimePicker = ({
   setFieldValue: any;
   date: any;
   errors: any;
+  setMesError: any;
 }) => {
   const [dateModal, setDateModal] = useState(false);
   const [startTimeModal, setStartTimeModal] = useState(false);
@@ -252,6 +271,28 @@ const RenderDateAndTimePicker = ({
     };
     setFieldValue("booked_dates", updatedDates);
   };
+
+  const { data: checkAvailability, isFetching } = useGetCheckAvailabilityQuery(
+    {
+      vehicle_id: selectVehicleDate?.id,
+      date: date?.date,
+      from: date?.from,
+      to: date?.to,
+    },
+    {
+      skip: !date?.date || !date?.from || !date?.to,
+    }
+  );
+
+  // console.log(checkAvailability, isError, error);
+
+  React.useEffect(() => {
+    if (!checkAvailability?.data?.is_available) {
+      setMesError(checkAvailability?.data?.availability_message as any);
+    } else {
+      setMesError(null);
+    }
+  }, [checkAvailability]);
 
   return (
     <>
@@ -278,31 +319,6 @@ const RenderDateAndTimePicker = ({
       />
 
       <View style={tw`gap-2 bg-white p-2 rounded-md`}>
-        <View
-          style={tw`border px-1 border-gray-50 flex-row items-center justify-between`}
-        >
-          <Text style={tw`text-sm  font-PoppinsMedium text-gray-500`}>
-            Booking date :
-          </Text>
-          {!values.booked_dates[index]?.date && (
-            <Text style={tw`text-sm text-gray-600`}>select a date</Text>
-          )}
-          {values.booked_dates[index]?.date &&
-            !values.booked_dates[index]?.from && (
-              <Text style={tw`text-sm text-gray-600`}>select start time</Text>
-            )}
-          {values.booked_dates[index]?.date &&
-            values.booked_dates[index]?.from &&
-            !values.booked_dates[index]?.to && (
-              <Text style={tw`text-sm text-gray-600`}>select end time</Text>
-            )}
-          {values.booked_dates[index]?.date &&
-            values.booked_dates[index]?.from &&
-            values.booked_dates[index]?.to && (
-              <Text style={tw`text-sm text-green-600`}>available</Text>
-            )}
-        </View>
-
         <View style={tw`gap-2`}>
           <TouchableOpacity onPress={() => setDateModal(true)}>
             <View style={tw` p-2 rounded-md `}>
@@ -361,6 +377,44 @@ const RenderDateAndTimePicker = ({
               </Text>
             )}
           </View>
+        </View>
+        <View style={tw`self-end`}>
+          <>
+            {checkAvailability?.data ? (
+              <>
+                {isFetching ? (
+                  <ActivityIndicator color={PrimaryColor} size="small" />
+                ) : checkAvailability?.data?.is_available ? (
+                  <Text style={tw`text-xs text-green-600`}>
+                    {checkAvailability?.data?.availability_message}
+                  </Text>
+                ) : (
+                  <Text style={tw`text-xs text-red-600`}>
+                    {checkAvailability?.data?.availability_message}
+                  </Text>
+                )}
+              </>
+            ) : (
+              <>
+                {!values.booked_dates[index]?.date && (
+                  <Text style={tw`text-xs text-gray-600`}>select a date</Text>
+                )}
+                {values.booked_dates[index]?.date &&
+                  !values.booked_dates[index]?.from && (
+                    <Text style={tw`text-xs text-gray-600`}>
+                      select start time
+                    </Text>
+                  )}
+                {values.booked_dates[index]?.date &&
+                  values.booked_dates[index]?.from &&
+                  !values.booked_dates[index]?.to && (
+                    <Text style={tw`text-xs text-gray-600`}>
+                      select end time
+                    </Text>
+                  )}
+              </>
+            )}
+          </>
         </View>
       </View>
     </>

@@ -24,7 +24,6 @@ const trailers = () => {
     refetch: TrailerRefetch,
   } = useGetSearchVehicleQuery({
     category: "Trailer",
-    type: "available",
     search: search,
   });
 

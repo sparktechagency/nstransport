@@ -64,7 +64,12 @@ const OrderCard = ({ item }: { item: Order }) => {
     //   ]}
     // >
     <View style={tw` gap-3 flex-row items-center justify-between  `}>
-      <TouchableOpacity style={tw`gap-3 flex-1 bg-white rounded-lg px-4 py-3`}>
+      <TouchableOpacity
+        onPress={() => {
+          router?.push("/order_view_modal");
+        }}
+        style={tw`gap-3 flex-1 bg-white rounded-lg px-4 py-3`}
+      >
         <View>
           <View style={tw`flex-row items-center gap-2`}>
             <SvgXml xml={IconUser} />

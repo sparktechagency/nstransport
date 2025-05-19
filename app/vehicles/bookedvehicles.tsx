@@ -17,7 +17,7 @@ const bookedvehicles = () => {
 
   const { data: allvehicles } = useGetSearchVehicleQuery({
     search: search,
-    type: "booked",
+    filter: "booked",
   });
 
   return (

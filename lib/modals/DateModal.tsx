@@ -10,6 +10,7 @@ interface DateModalProps {
   selectedDate: (dates: string[]) => void;
   item?: any;
   range?: boolean;
+  initialValue?: any;
 }
 
 const formatDate = (date: any) => dayjs(date).format("YYYY-MM-DD");
@@ -19,11 +20,14 @@ const DateModal = ({
   visible,
   item,
   range,
+  initialValue,
   selectedDate,
 }: DateModalProps) => {
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
   // const [bookedDates, setBookedDates] = useState<string[]>([]);
   const bookedDates = new Set(item?.booked ? item?.booked : []);
+
+  // console.log(selectedDates);
 
   const handleDateSelect = (day: any) => {
     const selectedDay = day.dateString;
@@ -116,6 +120,12 @@ const DateModal = ({
 
     return marked;
   };
+
+  React.useEffect(() => {
+    if (initialValue) {
+      setSelectedDates(initialValue);
+    }
+  }, [initialValue]);
 
   return (
     // <NormalModal

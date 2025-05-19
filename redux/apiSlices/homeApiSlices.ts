@@ -1,4 +1,9 @@
-import { BookedList, IStatistics, IVehicles } from "../interface/interface";
+import {
+  BookedList,
+  ICheck,
+  IStatistics,
+  IVehicles,
+} from "../interface/interface";
 
 import { api } from "../api/baseApi";
 
@@ -13,14 +18,13 @@ const homeSlice = api.injectEndpoints({
     getSearchVehicle: builder.query<
       IVehicles,
       {
-        type?: "total" | "booked" | "available";
         search?: string;
-        filter?: string;
+        filter?: "booked" | "available";
         category?: "Sprinter" | "Car Transporter" | "Trailer";
       }
     >({
-      query: ({ type = "total", search = "", filter = "", category = "" }) => ({
-        url: `/search_by_type?type=${type}&search=${search}&filter=${filter}&category=${category}`,
+      query: ({ search = "", filter = "available", category = "" }) => ({
+        url: `/search_by_type?&search=${search}&filter=${filter}&category=${category}`,
       }),
       providesTags: ["vehicle"],
     }),
@@ -38,6 +42,14 @@ const homeSlice = api.injectEndpoints({
       },
       providesTags: ["vehicle"],
     }),
+    getCheckAvailability: builder.query<ICheck, any>({
+      query: ({ vehicle_id, date, from, to }) => {
+        return {
+          url: `/check-availability/${vehicle_id}?date=${date}&from=${from}&to=${to}`,
+        };
+      },
+      providesTags: ["vehicle"],
+    }),
 
     // updateAdditional: builder.mutation({
     //     query: data => ({
@@ -50,6 +62,22 @@ const homeSlice = api.injectEndpoints({
     booking: builder.mutation<any, { message: string }>({
       query: (data) => ({
         url: `booking`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["vehicle"],
+    }),
+    customerUpdate: builder.mutation<any, any>({
+      query: ({ id, data }) => ({
+        url: `/customer-update/${id}`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["vehicle"],
+    }),
+    bookingSingleUpdate: builder.mutation<any, any>({
+      query: ({ id, data }) => ({
+        url: `/booking-update/${id}`,
         method: "POST",
         body: data,
       }),
@@ -83,4 +111,8 @@ export const {
   useLazyGetSearchVehicleQuery,
   useLazyGetStatisticQuery,
   useUpdateBookingMutation,
+  useGetCheckAvailabilityQuery,
+  useLazyGetCheckAvailabilityQuery,
+  useBookingSingleUpdateMutation,
+  useCustomerUpdateMutation,
 } = homeSlice;
