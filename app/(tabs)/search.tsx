@@ -53,12 +53,12 @@ export default function search() {
   //   };
   // });
 
-  const handleDayPress = (day) => {
+  const handleDayPress = (day: any) => {
     if (selectVehicle?.booked?.includes(day.dateString)) {
       // console.log(selectVehicle);
-      AsyncStorage.setItem("booked", JSON.stringify(selectVehicle));
+      AsyncStorage.setItem("vehicle", JSON.stringify(selectVehicle));
       setSelectVehicle(null);
-      router.push("/vehicles/booked");
+      router.push(`/vehicles/booked_list?search_date=${day.dateString}`);
     }
   };
 

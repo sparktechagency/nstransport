@@ -29,10 +29,10 @@ const homeSlice = api.injectEndpoints({
       providesTags: ["vehicle"],
     }),
     getBookedList: builder.query<BookedList, any>({
-      query: ({ id, boooking_date }) => {
-        if (boooking_date) {
+      query: ({ id, booking_date }) => {
+        if (booking_date) {
           return {
-            url: `/vehicle-booking-list/${id}?booking_date=${boooking_date}`,
+            url: `/vehicle-booking-list/${id}?booking_date=${booking_date}`,
           };
         } else {
           return {

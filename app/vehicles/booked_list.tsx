@@ -1,4 +1,5 @@
-import { FlatList, RefreshControl, View } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import { FlatList, RefreshControl, Text, View } from "react-native";
 
 import OrderCard from "@/components/common/OrderCard";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
@@ -8,11 +9,12 @@ import tw from "@/lib/tailwind";
 import { useGetBookedListQuery } from "@/redux/apiSlices/homeApiSlices";
 import { HIGHT } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
 import React from "react";
 
-const vehicle_details = () => {
+const vehicle_details = ({}) => {
   const [selectVehicle, setSelectVehicle] = React.useState<any>(null);
+
+  const { search_date } = useLocalSearchParams();
 
   const {
     data: allOrder,
@@ -20,7 +22,7 @@ const vehicle_details = () => {
     isLoading,
     refetch,
   } = useGetBookedListQuery(
-    { id: selectVehicle?.id },
+    { id: selectVehicle?.id, booking_date: search_date },
     {
       skip: !selectVehicle?.id,
     }
@@ -55,10 +57,22 @@ const vehicle_details = () => {
         }
         title={`${selectVehicle?.title} - ${selectVehicle?.code}`}
       />
+
       <FlatList
         refreshControl={
           <RefreshControl onRefresh={refetch} refreshing={isFetching} />
         }
+        ListHeaderComponent={() => {
+          return (
+            <>
+              {search_date && (
+                <Text style={tw`text-gray-400 text-xs text-center `}>
+                  {search_date}
+                </Text>
+              )}
+            </>
+          );
+        }}
         ListEmptyComponent={
           <EmptyCard
             hight={HIGHT * 0.6}
