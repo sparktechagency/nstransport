@@ -1,7 +1,8 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { FlatList, RefreshControl, Text, View } from "react-native";
+import { FlatList, RefreshControl, Text, TextInput, View } from "react-native";
 
 import OrderCard from "@/components/common/OrderCard";
+import { IconSearchGray } from "@/icons/icons";
 import BackWithComponent from "@/lib/backHeader/BackWithCoponent";
 import TButton from "@/lib/buttons/TButton";
 import EmptyCard from "@/lib/Empty/EmptyCard";
@@ -10,10 +11,11 @@ import { useGetBookedListQuery } from "@/redux/apiSlices/homeApiSlices";
 import { HIGHT } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
+import { SvgXml } from "react-native-svg";
 
 const vehicle_details = ({}) => {
   const [selectVehicle, setSelectVehicle] = React.useState<any>(null);
-
+  const [search, setSearch] = React.useState("");
   const { search_date } = useLocalSearchParams();
 
   const {
@@ -21,16 +23,15 @@ const vehicle_details = ({}) => {
     isFetching,
     isLoading,
     refetch,
-  } = useGetBookedListQuery(
-    { id: selectVehicle?.id, booking_date: search_date },
-    {
-      skip: !selectVehicle?.id,
-    }
-  );
+  } = useGetBookedListQuery({
+    id: selectVehicle?.id,
+    booking_date: search_date,
+    search,
+  });
 
   React.useEffect(() => {
     AsyncStorage.getItem("vehicle").then((item) => {
-      const data = JSON.parse(item);
+      const data = JSON.parse(item as any);
       setSelectVehicle(data);
     });
   }, []);
@@ -57,7 +58,21 @@ const vehicle_details = ({}) => {
         }
         title={`${selectVehicle?.title} - ${selectVehicle?.code}`}
       />
-
+      <View style={tw`px-4 `}>
+        {/* search Section  */}
+        <View
+          style={tw`h-12 px-3 flex-row  border border-gray-300 rounded-full items-center `}
+        >
+          <TextInput
+            onChangeText={(text) => setSearch(text)}
+            placeholder="Search"
+            value={search}
+            placeholderTextColor={tw.color("gray-400")}
+            style={tw`text-black flex-1`}
+          />
+          <SvgXml xml={IconSearchGray} />
+        </View>
+      </View>
       <FlatList
         refreshControl={
           <RefreshControl onRefresh={refetch} refreshing={isFetching} />
@@ -66,7 +81,7 @@ const vehicle_details = ({}) => {
           return (
             <>
               {search_date && (
-                <Text style={tw`text-gray-400 text-xs text-center `}>
+                <Text style={tw`text-gray-400 text-xs text-center mt-2`}>
                   {search_date}
                 </Text>
               )}
@@ -75,6 +90,7 @@ const vehicle_details = ({}) => {
         }}
         ListEmptyComponent={
           <EmptyCard
+            isLoading={isFetching || isLoading}
             hight={HIGHT * 0.6}
             //   isLoading={allvehiclesLoading || allvehiclesFetching}
           />

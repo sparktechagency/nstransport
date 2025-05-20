@@ -29,21 +29,16 @@ const homeSlice = api.injectEndpoints({
       providesTags: ["vehicle"],
     }),
     getBookedList: builder.query<BookedList, any>({
-      query: ({ id, booking_date }) => {
-        if (booking_date) {
-          return {
-            url: `/vehicle-booking-list/${id}?booking_date=${booking_date}`,
-          };
-        } else {
-          return {
-            url: `/vehicle-booking-list/${id}`,
-          };
-        }
+      query: ({ id = "", booking_date = "", search = "" }) => {
+        // console.log(search, id, booking_date);
+        return {
+          url: `/vehicle-booking-list/${id}?booking_date=${booking_date}&search=${search}`,
+        };
       },
       providesTags: ["vehicle"],
     }),
     getCheckAvailability: builder.query<ICheck, any>({
-      query: ({ vehicle_id, date, from, to }) => {
+      query: ({ vehicle_id = "", date = "", from = "", to = "" }) => {
         return {
           url: `/check-availability/${vehicle_id}?date=${date}&from=${from}&to=${to}`,
         };
