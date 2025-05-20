@@ -234,6 +234,7 @@ const RenderDateAndTimePicker = ({
       <DatePicker
         modal
         mode="time"
+        is24hourSource="locale"
         minuteInterval={2}
         open={startTimeModal || endTimeModal}
         date={

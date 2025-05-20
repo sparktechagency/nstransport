@@ -36,6 +36,7 @@ export default function booking() {
   const router = useRouter();
   const [selectVehicle, setSelectVehicle] = useState<any>(null);
   const [mesError, setMesError] = useState(null);
+
   useEffect(() => {
     AsyncStorage.getItem("vehicle").then((item) => {
       const data = JSON.parse(item);
@@ -46,15 +47,12 @@ export default function booking() {
   const handleBookingCar = async (values: any) => {
     if (selectVehicle?.id) values.vehicle_id = selectVehicle.id;
     try {
-      console.log(values);
       const res = await bookingService(values).unwrap();
-      console.log(res);
       if (res?.status) {
-        Alert.alert("Success", res?.message || "Booking make successfully");
+        Alert.alert("Success", res?.message || "Booking made successfully");
         router.back();
       }
     } catch (error) {
-      console.log(error);
       showToast({
         title: "Warning",
         content: error.message,
@@ -68,21 +66,74 @@ export default function booking() {
     booked_dates: yup
       .array()
       .min(1, "* At least one booking date is required")
-      .test("complete-dates", "* Please complete all fields ", (dates) => {
-        const okay = dates?.some((i) => i?.date && i.from && i.to);
-        return okay;
+      .test(
+        "complete-dates",
+        "* Complete all fields for each date",
+        (dates) => {
+          return dates?.every((date) => date?.date && date.from && date.to);
+        }
+      )
+      .test("valid-times", "* End time must be after start time", (dates) => {
+        if (!dates) return true;
+        return dates.every((date) => {
+          if (!date?.date || !date?.from || !date?.to) return true;
+
+          // Convert to minutes since midnight for simple comparison
+          const fromMins = convertTimeToMinutes(date.from);
+          const toMins = convertTimeToMinutes(date.to);
+
+          return toMins > fromMins;
+        });
+      })
+      .test("no-overlap", "* Time slots overlap", (dates) => {
+        if (!dates || dates.length < 2) return true;
+
+        // Check all pairs for overlaps
+        for (let i = 0; i < dates.length; i++) {
+          for (let j = i + 1; j < dates.length; j++) {
+            if (dates[i].date !== dates[j].date) continue;
+
+            const slot1 = dates[i];
+            const slot2 = dates[j];
+
+            if (doTimeSlotsOverlap(slot1, slot2)) {
+              return false;
+            }
+          }
+        }
+        return true;
       }),
   });
 
+  // Helper functions
+  const convertTimeToMinutes = (timeStr: string): number => {
+    const [time, period] = timeStr.split(" ");
+    const [hours, minutes] = time.split(":").map(Number);
+    let total = hours * 60 + minutes;
+    if (period === "PM" && hours !== 12) total += 12 * 60;
+    if (period === "AM" && hours === 12) total -= 12 * 60;
+    return total;
+  };
+
+  const doTimeSlotsOverlap = (slot1: any, slot2: any): boolean => {
+    const s1Start = convertTimeToMinutes(slot1.from);
+    const s1End = convertTimeToMinutes(slot1.to);
+    const s2Start = convertTimeToMinutes(slot2.from);
+    const s2End = convertTimeToMinutes(slot2.to);
+
+    return (
+      (s1Start >= s2Start && s1Start < s2End) ||
+      (s2Start >= s1Start && s2Start < s1End)
+    );
+  };
+
   return (
-    <View style={tw` flex-1 bg-base`}>
+    <View style={tw`flex-1 bg-base`}>
       <BackWithComponent
-        onPress={() => {
-          router.back();
-        }}
-        titleStyle={tw``}
+        onPress={() => router.back()}
         title={`${selectVehicle?.title} - ${selectVehicle?.code}`}
       />
+
       <Formik
         initialValues={{
           renter_name: "",
@@ -96,9 +147,7 @@ export default function booking() {
           ],
         }}
         validationSchema={validationSchema}
-        onSubmit={async (values) => {
-          handleBookingCar(values);
-        }}
+        onSubmit={handleBookingCar}
       >
         {({
           handleChange,
@@ -107,7 +156,6 @@ export default function booking() {
           values,
           setFieldValue,
           errors,
-          setErrors,
           isValid,
           dirty,
         }) => (
@@ -117,7 +165,7 @@ export default function booking() {
               contentContainerStyle={tw`px-4 py-4 gap-5`}
             >
               <View style={tw`gap-4 pb-5`}>
-                <View style={tw`gap-1 `}>
+                <View style={tw`gap-1`}>
                   <View style={tw`flex-row items-center`}>
                     <Text
                       style={tw`text-base text-black font-PoppinsSemiBold px-1`}
@@ -142,7 +190,7 @@ export default function booking() {
                   />
                 </View>
 
-                <View style={tw`gap-1 `}>
+                <View style={tw`gap-1`}>
                   <View style={tw`flex-row items-center`}>
                     <Text
                       style={tw`text-base text-black font-PoppinsSemiBold px-1`}
@@ -183,8 +231,8 @@ export default function booking() {
                       </Text>
                     )}
                   </View>
-                  <View style={tw` gap-2`}>
-                    {values?.booked_dates?.map((date, index: number) => (
+                  <View style={tw`gap-2`}>
+                    {values.booked_dates?.map((date, index: number) => (
                       <RenderDateAndTimePicker
                         key={index}
                         index={index}
@@ -200,14 +248,26 @@ export default function booking() {
                       containerStyle={tw`h-10 my-3 w-[50%] self-center rounded-lg bg-primary`}
                       svg={IconPlusWhite}
                       onPress={() => {
-                        setFieldValue("booked_dates", [
-                          ...values.booked_dates,
-                          {
-                            date: "",
-                            from: "",
-                            to: "",
-                          },
-                        ]);
+                        // Only allow adding new date if all previous dates are complete
+                        const allComplete = values.booked_dates.every(
+                          (d) => d.date && d.from && d.to
+                        );
+
+                        if (allComplete) {
+                          setFieldValue("booked_dates", [
+                            ...values.booked_dates,
+                            {
+                              date: "",
+                              from: "",
+                              to: "",
+                            },
+                          ]);
+                        } else {
+                          Alert.alert(
+                            "Complete Current Booking",
+                            "Please complete all fields for the current booking before adding another."
+                          );
+                        }
                       }}
                     />
                   </View>
@@ -221,7 +281,7 @@ export default function booking() {
                 disabled={
                   !isValid ||
                   !dirty ||
-                  !!mesError ||
+                  mesError ||
                   Object.keys(errors).length > 0
                 }
               />
@@ -258,7 +318,9 @@ const RenderDateAndTimePicker = ({
     const updatedDates = [...values.booked_dates];
     updatedDates[index] = {
       ...updatedDates[index],
-      date: selectedDate![0],
+      date: selectedDate[0],
+      from: "",
+      to: "",
     };
     setFieldValue("booked_dates", updatedDates);
   };
@@ -267,7 +329,7 @@ const RenderDateAndTimePicker = ({
     const updatedDates = [...values.booked_dates];
     updatedDates[index] = {
       ...updatedDates[index],
-      [field]: dayjs(time).format("h:mm A"), // Changed from "HH:mm" to "h:mm A"
+      [field]: dayjs(time).format("h:mm A"),
     };
     setFieldValue("booked_dates", updatedDates);
   };
@@ -284,139 +346,166 @@ const RenderDateAndTimePicker = ({
     }
   );
 
-  // console.log(checkAvailability, isError, error);
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (!checkAvailability?.data?.is_available) {
-      setMesError(checkAvailability?.data?.availability_message as any);
+      setMesError(checkAvailability?.data?.availability_message);
     } else {
       setMesError(null);
     }
   }, [checkAvailability]);
 
   return (
-    <>
-      <DatePicker
-        modal
-        mode="time"
-        // is24hourSource={""}
-        open={startTimeModal || endTimeModal}
-        date={new Date()}
-        onConfirm={(time) => {
-          if (startTimeModal) {
-            handleTimeChange(time, "from");
-            setStartTimeModal(false);
-          }
-          if (endTimeModal) {
-            handleTimeChange(time, "to");
-            setEndTimeModal(false);
-          }
-        }}
-        onCancel={() => {
-          setStartTimeModal(false);
-          setEndTimeModal(false);
-        }}
-      />
+    <View style={tw`gap-2 bg-white p-2 rounded-md`}>
+      <View style={tw`gap-2`}>
+        <TouchableOpacity onPress={() => setDateModal(true)}>
+          <View style={tw`p-2 rounded-md border border-gray-200`}>
+            <Text
+              style={tw`text-sm ${date.date ? "text-black" : "text-gray-500"}`}
+            >
+              {date.date || "Select date"}
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <DateModal
+          item={selectVehicleDate}
+          selectedDate={handleDateChange}
+          visible={dateModal}
+          setVisible={setDateModal}
+        />
+        {errors.booked_dates?.[index]?.date && (
+          <Text style={tw`text-red-500 text-xs font-PoppinsRegular`}>
+            {errors.booked_dates[index].date}
+          </Text>
+        )}
+      </View>
 
-      <View style={tw`gap-2 bg-white p-2 rounded-md`}>
-        <View style={tw`gap-2`}>
-          <TouchableOpacity onPress={() => setDateModal(true)}>
-            <View style={tw` p-2 rounded-md `}>
-              <DateModal
-                item={selectVehicleDate}
-                selectedDate={handleDateChange}
-                visible={dateModal}
-                setVisible={setDateModal}
-              />
+      <View style={tw`gap-2 flex-row`}>
+        <View style={tw`flex-1`}>
+          <TouchableOpacity
+            onPress={() => {
+              if (!values.booked_dates[index]?.date) {
+                Alert.alert("Please select a date first");
+                return;
+              }
+              setStartTimeModal(true);
+            }}
+          >
+            <View
+              style={tw`bg-gray-50 h-12 px-2 rounded-md flex-row items-center justify-between`}
+            >
+              <Text
+                style={tw`text-sm ${
+                  date.from ? "text-black" : "text-gray-500"
+                }`}
+              >
+                {date.from || "Select start time"}
+              </Text>
+              <SvgXml xml={IconCalendar} />
             </View>
           </TouchableOpacity>
-          {errors.booked_dates?.[index]?.date && (
+          <DatePicker
+            modal
+            mode="time"
+            open={startTimeModal}
+            date={new Date()}
+            onConfirm={(time) => {
+              handleTimeChange(time, "from");
+              setStartTimeModal(false);
+            }}
+            onCancel={() => setStartTimeModal(false)}
+          />
+          {errors.booked_dates?.[index]?.from && (
             <Text style={tw`text-red-500 text-xs font-PoppinsRegular`}>
-              {errors.booked_dates[index].date}
+              {errors.booked_dates[index].from}
             </Text>
           )}
         </View>
 
-        <View style={tw`gap-2 flex-row`}>
-          <View style={tw`flex-1`}>
-            <TouchableOpacity onPress={() => setStartTimeModal(true)}>
-              <View
-                style={tw`bg-gray-50 h-12 px-2 rounded-md flex-row items-center justify-between`}
+        <View style={tw`flex-1`}>
+          <TouchableOpacity
+            onPress={() => {
+              if (!values.booked_dates[index]?.from) {
+                Alert.alert("Please select start time first");
+                return;
+              }
+              setEndTimeModal(true);
+            }}
+          >
+            <View
+              style={tw`bg-gray-50 h-12 px-2 rounded-md flex-row items-center justify-between`}
+            >
+              <Text
+                style={tw`text-sm ${date.to ? "text-black" : "text-gray-500"}`}
               >
-                <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
-                  {values.booked_dates[index]?.from
-                    ? values.booked_dates[index].from
-                    : "Select start time"}
-                </Text>
-                <SvgXml xml={IconCalendar} />
-              </View>
-            </TouchableOpacity>
-            {errors.booked_dates?.[index]?.from && (
-              <Text style={tw`text-red-500 text-xs font-PoppinsRegular`}>
-                {errors.booked_dates[index].from}
+                {date.to || "Select end time"}
               </Text>
-            )}
-          </View>
-
-          <View style={tw`flex-1`}>
-            <TouchableOpacity onPress={() => setEndTimeModal(true)}>
-              <View
-                style={tw`bg-gray-50 h-12 px-2 rounded-md flex-row items-center justify-between`}
-              >
-                <Text style={tw`text-sm text-gray-500 font-PoppinsRegular`}>
-                  {values.booked_dates[index]?.to
-                    ? values.booked_dates[index].to
-                    : "Select end time"}
-                </Text>
-                <SvgXml xml={IconCalendar} />
-              </View>
-            </TouchableOpacity>
-            {errors.booked_dates?.[index]?.to && (
-              <Text style={tw`text-red-500 text-xs font-PoppinsRegular`}>
-                {errors.booked_dates[index].to}
-              </Text>
-            )}
-          </View>
-        </View>
-        <View style={tw`self-end`}>
-          <>
-            {checkAvailability?.data ? (
-              <>
-                {isFetching ? (
-                  <ActivityIndicator color={PrimaryColor} size="small" />
-                ) : checkAvailability?.data?.is_available ? (
-                  <Text style={tw`text-xs text-green-600`}>
-                    {checkAvailability?.data?.availability_message}
-                  </Text>
-                ) : (
-                  <Text style={tw`text-xs text-red-600`}>
-                    {checkAvailability?.data?.availability_message}
-                  </Text>
-                )}
-              </>
-            ) : (
-              <>
-                {!values.booked_dates[index]?.date && (
-                  <Text style={tw`text-xs text-gray-600`}>select a date</Text>
-                )}
-                {values.booked_dates[index]?.date &&
-                  !values.booked_dates[index]?.from && (
-                    <Text style={tw`text-xs text-gray-600`}>
-                      select start time
-                    </Text>
-                  )}
-                {values.booked_dates[index]?.date &&
-                  values.booked_dates[index]?.from &&
-                  !values.booked_dates[index]?.to && (
-                    <Text style={tw`text-xs text-gray-600`}>
-                      select end time
-                    </Text>
-                  )}
-              </>
-            )}
-          </>
+              <SvgXml xml={IconCalendar} />
+            </View>
+          </TouchableOpacity>
+          <DatePicker
+            modal
+            mode="time"
+            open={endTimeModal}
+            date={new Date()}
+            onConfirm={(time) => {
+              handleTimeChange(time, "to");
+              setEndTimeModal(false);
+            }}
+            onCancel={() => setEndTimeModal(false)}
+          />
+          {errors.booked_dates?.[index]?.to && (
+            <Text style={tw`text-red-500 text-xs font-PoppinsRegular`}>
+              {errors.booked_dates[index].to}
+            </Text>
+          )}
         </View>
       </View>
-    </>
+
+      {index > 0 && (
+        <TouchableOpacity
+          style={tw`self-end`}
+          onPress={() => {
+            const newDates = [...values.booked_dates];
+            newDates.splice(index, 1);
+            setFieldValue("booked_dates", newDates);
+          }}
+        >
+          <Text style={tw`text-red-500 text-xs`}>Remove this booking</Text>
+        </TouchableOpacity>
+      )}
+
+      <View style={tw`self-end`}>
+        {checkAvailability?.data ? (
+          <>
+            {isFetching ? (
+              <ActivityIndicator color={PrimaryColor} size="small" />
+            ) : checkAvailability?.data?.is_available ? (
+              <Text style={tw`text-xs text-green-600`}>
+                {checkAvailability?.data?.availability_message}
+              </Text>
+            ) : (
+              <Text style={tw`text-xs text-red-600`}>
+                {checkAvailability?.data?.availability_message}
+              </Text>
+            )}
+          </>
+        ) : (
+          <>
+            {!values.booked_dates[index]?.date && (
+              <Text style={tw`text-xs text-gray-600`}>Select a date</Text>
+            )}
+            {values.booked_dates[index]?.date &&
+              !values.booked_dates[index]?.from && (
+                <Text style={tw`text-xs text-gray-600`}>Select start time</Text>
+              )}
+            {values.booked_dates[index]?.date &&
+              values.booked_dates[index]?.from &&
+              !values.booked_dates[index]?.to && (
+                <Text style={tw`text-xs text-gray-600`}>Select end time</Text>
+              )}
+          </>
+        )}
+      </View>
+    </View>
   );
 };
