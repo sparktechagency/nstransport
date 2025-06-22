@@ -119,6 +119,9 @@ const index = () => {
             </View>
             <View style={tw`w-full px-5 py-9`}>
               <TButton
+                disabled={otp.length < 6}
+                isLoading={result.isLoading}
+                loadingColor="white"
                 title="Login"
                 containerStyle={tw`w-full `}
                 onPress={() => {
